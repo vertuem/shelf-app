@@ -1,0 +1,16 @@
+name: Crash
+description: Shelf quit unexpectedly. "Report a Crash…" in About copies the log for you.
+labels: [crash, p1]
+body:
+  - type: textarea
+    id: log
+    attributes:
+      label: Crash log
+      description: Paste the log that "Report a Crash…" copied. Crash logs contain no clipboard content.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What you were doing

@@ -1,0 +1,13 @@
+{
+  "app": "Screenshot",
+  "expectedKind": "image",
+  "items": [
+    [
+      {
+        "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "type": "public.png"
+      }
+    ]
+  ],
+  "name": "preview-screenshot"
+}

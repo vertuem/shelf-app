@@ -1,0 +1,21 @@
+{
+  "app": "Safari",
+  "expectedKind": "link",
+  "items": [
+    [
+      {
+        "text": "https://www.apple.com/macos/",
+        "type": "public.url"
+      },
+      {
+        "text": "macOS - Apple",
+        "type": "public.url-name"
+      },
+      {
+        "text": "https://www.apple.com/macos/",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "safari-link"
+}

@@ -1,0 +1,13 @@
+{
+  "app": "Terminal",
+  "expectedKind": "text",
+  "items": [
+    [
+      {
+        "text": "$ swift test\nExecuted 120 tests, with 0 failures",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "terminal-output"
+}

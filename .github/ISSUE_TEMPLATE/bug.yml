@@ -1,0 +1,33 @@
+name: Bug
+description: Something does not work as described.
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, what happened instead. Please do not paste clipboard contents you would not want public.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Shelf version
+      description: About in Settings shows it.
+    validations:
+      required: true
+  - type: input
+    id: macos
+    attributes:
+      label: macOS version
+    validations:
+      required: true
+  - type: input
+    id: app
+    attributes:
+      label: App you copied from or pasted into
+  - type: dropdown
+    id: install
+    attributes:
+      label: Installed from
+      options: [Homebrew, DMG from Releases, Built from source]

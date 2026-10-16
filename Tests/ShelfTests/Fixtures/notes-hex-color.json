@@ -1,0 +1,13 @@
+{
+  "app": "Notes",
+  "expectedKind": "color",
+  "items": [
+    [
+      {
+        "text": "#1e90ff",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "notes-hex-color"
+}

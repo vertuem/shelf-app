@@ -1,0 +1,38 @@
+{
+  "app": "Microsoft Excel",
+  "expectedKind": "richText",
+  "items": [
+    [
+      {
+        "text": "Region\tQ3\nEMEA\t1200\n",
+        "type": "public.utf8-plain-text"
+      },
+      {
+        "text": "<table><tr><td>Region</td><td>Q3</td></tr></table>",
+        "type": "public.html"
+      },
+      {
+        "text": "{\\rtf1\\ansi\\ansicpg1252 {\\fonttbl\\f0 Helvetica;} \\f0 Hello from a document}",
+        "type": "public.rtf"
+      },
+      {
+        "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "type": "public.png"
+      },
+      {
+        "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "type": "public.tiff"
+      },
+      {
+        "text": "%PDF-1.4",
+        "type": "com.adobe.pdf"
+      },
+      {
+        "text": "link",
+        "type": "com.microsoft.Link-Source"
+      }
+    ]
+  ],
+  "name": "excel-cells",
+  "note": "The case a naive has-an-image rule gets wrong: a rendered picture beside a cell range."
+}

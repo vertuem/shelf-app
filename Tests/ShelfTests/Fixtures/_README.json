@@ -1,0 +1,3 @@
+{
+  "note": "Fixtures modeled on what each app writes to the pasteboard. Replace or add real captures with `Shelf --dump-pasteboard <name>` (see the README). `text` values are UTF-8; `base64` values are raw bytes."
+}

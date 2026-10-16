@@ -1,0 +1,13 @@
+{
+  "app": "Some App",
+  "expectedKind": "other",
+  "items": [
+    [
+      {
+        "text": "opaque",
+        "type": "com.example.private-data"
+      }
+    ]
+  ],
+  "name": "custom-type"
+}

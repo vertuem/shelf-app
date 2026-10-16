@@ -1,0 +1,15 @@
+# pre-commit install   (https://pre-commit.com)
+repos:
+  - repo: local
+    hooks:
+      - id: swiftformat
+        name: SwiftFormat
+        entry: swiftformat
+        language: system
+        types: [swift]
+      - id: swiftlint
+        name: SwiftLint
+        entry: swiftlint lint --strict --quiet
+        language: system
+        types: [swift]
+        pass_filenames: false

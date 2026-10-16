@@ -1,0 +1,25 @@
+{
+  "app": "Safari",
+  "expectedKind": "image",
+  "items": [
+    [
+      {
+        "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "type": "public.tiff"
+      },
+      {
+        "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "type": "public.png"
+      },
+      {
+        "text": "https://www.apple.com/hero.png",
+        "type": "public.url"
+      },
+      {
+        "text": "https://www.apple.com/hero.png",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "safari-copy-image"
+}

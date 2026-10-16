@@ -1,0 +1,98 @@
+{
+  "fill-specializations": [
+    {
+      "value": {
+        "linear-gradient": [
+          "srgb:0.43137,0.48627,1.00000,1.00000",
+          "srgb:0.13725,0.16471,0.47059,1.00000"
+        ],
+        "orientation": {
+          "start": {
+            "x": 0.5,
+            "y": 0
+          },
+          "stop": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      }
+    },
+    {
+      "appearance": "dark",
+      "value": {
+        "linear-gradient": [
+          "srgb:0.23137,0.25882,0.58824,1.00000",
+          "srgb:0.06667,0.07843,0.22745,1.00000"
+        ],
+        "orientation": {
+          "start": {
+            "x": 0.5,
+            "y": 0
+          },
+          "stop": {
+            "x": 0.5,
+            "y": 1
+          }
+        }
+      }
+    }
+  ],
+  "groups": [
+    {
+      "name": "Shelf",
+      "layers": [
+        {
+          "image-name": "shelf.svg",
+          "name": "Shelf",
+          "glass": true,
+          "opacity": 0.45
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.35
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": true,
+        "value": 0.65
+      },
+      "blur-material": 0.6
+    },
+    {
+      "name": "Cards",
+      "layers": [
+        {
+          "image-name": "card-middle.svg",
+          "name": "Middle card",
+          "glass": true
+        },
+        {
+          "image-name": "card-left.svg",
+          "name": "Left card",
+          "glass": true
+        },
+        {
+          "image-name": "card-right.svg",
+          "name": "Right card",
+          "glass": true
+        }
+      ],
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.5
+      },
+      "specular": true,
+      "translucency": {
+        "enabled": false,
+        "value": 0
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": [
+      "macOS"
+    ]
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "app": "Finder",
+  "expectedKind": "file",
+  "items": [
+    [
+      {
+        "text": "file:///Users/test/Documents/Report.pdf",
+        "type": "public.file-url"
+      },
+      {
+        "text": "Report.pdf",
+        "type": "public.utf8-plain-text"
+      },
+      {
+        "text": "icns",
+        "type": "com.apple.icns"
+      }
+    ]
+  ],
+  "name": "finder-file"
+}

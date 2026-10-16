@@ -1,0 +1,44 @@
+# SwiftLint: correctness and consistency. Formatting is SwiftFormat's job.
+included:
+  - Sources
+  - Tests
+  - Package.swift
+excluded:
+  - .build
+  - build
+  - .context
+
+disabled_rules:
+  - line_length          # SwiftFormat wraps at 150
+  - trailing_comma       # SwiftFormat adds them
+  - todo
+  - nesting
+  - opening_brace        # conflicts with SwiftFormat on multi-line conditions
+  - function_body_length # long SwiftUI bodies and SQL are clearer inline
+  - type_body_length
+  - file_length
+  - cyclomatic_complexity
+  - large_tuple
+  - identifier_name
+  - force_cast
+  - for_where
+  - optional_data_string_conversion # String(decoding:as:) is the deliberate, lossy choice
+
+opt_in_rules:
+  - empty_count
+  - first_where
+  - contains_over_first_not_nil
+  - private_action
+  - redundant_nil_coalescing
+  - sorted_first_last
+  - unneeded_parentheses_in_closure_argument
+  - yoda_condition
+
+
+custom_rules:
+  no_print_in_sources:
+    name: "No print in the app"
+    regex: '^\s*print\('
+    included: "Sources/(ShelfCore|ShelfCapture|ShelfPaste|ShelfUI)/"
+    message: "Use Log.* and never log clipboard content."
+    severity: error

@@ -1,0 +1,13 @@
+{
+  "app": "Messages",
+  "expectedKind": "text",
+  "items": [
+    [
+      {
+        "text": "Read this: https://example.com when you can",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "plain-sentence-with-url"
+}

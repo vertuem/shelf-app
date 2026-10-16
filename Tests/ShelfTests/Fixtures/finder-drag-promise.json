@@ -1,0 +1,16 @@
+{
+  "app": "Photos",
+  "expectedKind": "file",
+  "items": [
+    [
+      {
+        "text": "public.jpeg",
+        "type": "com.apple.pasteboard.promised-file-content-type"
+      }
+    ]
+  ],
+  "name": "finder-drag-promise",
+  "promised": [
+    "com.apple.pasteboard.promised-file-url"
+  ]
+}

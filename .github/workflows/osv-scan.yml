@@ -1,0 +1,23 @@
+name: Dependency scan
+
+# The weekly "swift package audit" equivalent: OSV-Scanner over Package.resolved.
+on:
+  schedule:
+    - cron: "17 6 * * 1"
+  pull_request:
+    paths: ["Package.resolved", "Package.swift"]
+  workflow_dispatch:
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+
+jobs:
+  scan:
+    uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@v2.7.0
+    with:
+      scan-args: |-
+        --lockfile=Package.resolved
+      # Code scanning needs a public repository (or Advanced Security).
+      upload-sarif: ${{ !github.event.repository.private }}

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!-- Template. Scripts/build.sh fills in the __PLACEHOLDERS__. -->
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
+	<key>CFBundleLocalizations</key>
+	<array>
+		<string>en</string>
+		<string>nl</string>
+		<string>de</string>
+		<string>fr</string>
+		<string>es</string>
+		<string>ja</string>
+	</array>
+	<key>CFBundleName</key>
+	<string>Shelf</string>
+	<key>CFBundleDisplayName</key>
+	<string>Shelf</string>
+	<key>CFBundleExecutable</key>
+	<string>Shelf</string>
+	<key>CFBundleIdentifier</key>
+	<string>__BUNDLE_ID__</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>__VERSION__</string>
+	<key>CFBundleVersion</key>
+	<string>__BUILD__</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
+	<key>LSMinimumSystemVersion</key>
+	<string>14.0</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.productivity</string>
+	<key>LSUIElement</key>
+	<true/>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSDesktopFolderUsageDescription</key>
+	<string>Shelf reads the files you copy from your Desktop folder, to show a preview and paste them back. It reads nothing else there.</string>
+	<key>NSDocumentsFolderUsageDescription</key>
+	<string>Shelf reads the files you copy from your Documents folder, to show a preview and paste them back. It reads nothing else there.</string>
+	<key>NSDownloadsFolderUsageDescription</key>
+	<string>Shelf reads the files you copy from your Downloads folder, to show a preview and paste them back. It reads nothing else there.</string>
+	<key>NSNetworkVolumesUsageDescription</key>
+	<string>Shelf reads the files you copy from network drives, to show a preview and paste them back.</string>
+	<key>NSRemovableVolumesUsageDescription</key>
+	<string>Shelf reads the files you copy from external drives, to show a preview and paste them back.</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2026 The Shelf contributors. MIT License.</string>
+	<key>ShelfRepository</key>
+	<string>__REPOSITORY__</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>__BUNDLE_ID__</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>shelf-app</string>
+			</array>
+		</dict>
+	</array>
+	<key>UTExportedTypeDeclarations</key>
+	<array>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.vertuem.shelf.item-id</string>
+			<key>UTTypeDescription</key>
+			<string>Shelf card</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.vertuem.shelf.pinboard-id</string>
+			<key>UTTypeDescription</key>
+			<string>Shelf pinboard</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.vertuem.shelf.origin</string>
+			<key>UTTypeDescription</key>
+			<string>Written by Shelf</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+		</dict>
+		<dict>
+			<key>UTTypeIdentifier</key>
+			<string>com.vertuem.shelf.restored</string>
+			<key>UTTypeDescription</key>
+			<string>Restored by Shelf</string>
+			<key>UTTypeConformsTo</key>
+			<array>
+				<string>public.data</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

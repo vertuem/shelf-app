@@ -1,0 +1,25 @@
+{
+  "app": "Safari",
+  "expectedKind": "richText",
+  "items": [
+    [
+      {
+        "text": "bplist00-webarchive",
+        "type": "com.apple.webarchive"
+      },
+      {
+        "text": "{\\rtf1\\ansi\\ansicpg1252 {\\fonttbl\\f0 Helvetica;} \\f0 Hello from a document}",
+        "type": "public.rtf"
+      },
+      {
+        "text": "<p>Liquid Glass is a new material.</p>",
+        "type": "public.html"
+      },
+      {
+        "text": "Liquid Glass is a new material.",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "safari-selection"
+}

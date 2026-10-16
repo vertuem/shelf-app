@@ -1,0 +1,27 @@
+{
+  "app": "Finder",
+  "expectedKind": "file",
+  "items": [
+    [
+      {
+        "text": "file:///Users/test/a.txt",
+        "type": "public.file-url"
+      },
+      {
+        "text": "a.txt",
+        "type": "public.utf8-plain-text"
+      }
+    ],
+    [
+      {
+        "text": "file:///Users/test/b.txt",
+        "type": "public.file-url"
+      },
+      {
+        "text": "b.txt",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "finder-two-files"
+}

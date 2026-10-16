@@ -1,0 +1,19 @@
+# SwiftFormat: formatting only. SwiftLint checks the rest.
+--swiftversion 6.2
+--exclude .build,build,dist,.context
+--indent 4
+--maxwidth 150
+--wraparguments before-first
+--wrapparameters before-first
+--wrapcollections before-first
+--closingparen balanced
+--commas collections-only
+--ranges preserve
+--semicolons never
+--stripunusedargs closure-only
+--header ignore
+--importgrouping alpha
+--self remove
+--redundanttype inferred
+--disable wrapMultilineStatementBraces,redundantReturn,redundantSelf,trailingClosures,preferKeyPath,wrapArguments,wrap,blankLinesAtStartOfScope,hoistPatternLet,redundantStaticSelf,redundantNilInit,enumNamespaces,unusedArguments,redundantRawValues,docComments,andOperator,redundantParens,opaqueGenericParameters,redundantSendable,wrapIfStatementBodies,wrapPropertyBodies,wrapFunctionBodies,wrapLoopBodies,wrapIfExpressionBodies,numberFormatting,hoistTry,hoistAwait,noForceUnwrapInTests,extensionAccessControl,conditionalAssignment,blankLinesBetweenScopes,redundantThrows,redundantAsync
+--indentstrings true

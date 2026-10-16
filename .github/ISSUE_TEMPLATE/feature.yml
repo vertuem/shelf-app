@@ -1,0 +1,15 @@
+name: Feature
+description: Suggest a change. Text expansion, scripting and Windows or Linux are out of scope.
+labels: [enhancement]
+body:
+  - type: textarea
+    id: job
+    attributes:
+      label: What are you trying to get done?
+      description: Describe the job, not the solution.
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would help

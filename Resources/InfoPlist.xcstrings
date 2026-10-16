@@ -1,0 +1,211 @@
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "NSDesktopFolderUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf liest die Dateien, die du aus deinem Schreibtischordner kopierst, um eine Vorschau zu zeigen und sie wieder einzusetzen. Sonst liest es dort nichts."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf reads the files you copy from your Desktop folder, to show a preview and paste them back. It reads nothing else there."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lee los archivos que copias de tu carpeta Escritorio para mostrar una vista previa y volver a pegarlos. No lee nada más allí."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lit les fichiers que vous copiez depuis votre dossier Bureau, pour en afficher un aperçu et les recoller. Il n'y lit rien d'autre."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelfは、デスクトップフォルダからコピーしたファイルを読み込み、プレビューの表示と再ペーストに使います。それ以外は読み込みません。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf leest de bestanden die je uit je bureaubladmap kopieert, om een voorvertoning te tonen en ze terug te plakken. Verder leest het daar niets."
+          }
+        }
+      }
+    },
+    "NSDocumentsFolderUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf liest die Dateien, die du aus deinem Dokumenteordner kopierst, um eine Vorschau zu zeigen und sie wieder einzusetzen. Sonst liest es dort nichts."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf reads the files you copy from your Documents folder, to show a preview and paste them back. It reads nothing else there."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lee los archivos que copias de tu carpeta Documentos para mostrar una vista previa y volver a pegarlos. No lee nada más allí."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lit les fichiers que vous copiez depuis votre dossier Documents, pour en afficher un aperçu et les recoller. Il n'y lit rien d'autre."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelfは、書類フォルダからコピーしたファイルを読み込み、プレビューの表示と再ペーストに使います。それ以外は読み込みません。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf leest de bestanden die je uit je documentenmap kopieert, om een voorvertoning te tonen en ze terug te plakken. Verder leest het daar niets."
+          }
+        }
+      }
+    },
+    "NSDownloadsFolderUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf liest die Dateien, die du aus deinem Downloadsordner kopierst, um eine Vorschau zu zeigen und sie wieder einzusetzen. Sonst liest es dort nichts."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf reads the files you copy from your Downloads folder, to show a preview and paste them back. It reads nothing else there."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lee los archivos que copias de tu carpeta Descargas para mostrar una vista previa y volver a pegarlos. No lee nada más allí."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lit les fichiers que vous copiez depuis votre dossier Téléchargements, pour en afficher un aperçu et les recoller. Il n'y lit rien d'autre."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelfは、ダウンロードフォルダからコピーしたファイルを読み込み、プレビューの表示と再ペーストに使います。それ以外は読み込みません。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf leest de bestanden die je uit je downloadmap kopieert, om een voorvertoning te tonen en ze terug te plakken. Verder leest het daar niets."
+          }
+        }
+      }
+    },
+    "NSNetworkVolumesUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf liest die Dateien, die du von Netzwerklaufwerken kopierst, um eine Vorschau zu zeigen und sie wieder einzusetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf reads the files you copy from network drives, to show a preview and paste them back."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lee los archivos que copias de unidades de red para mostrar una vista previa y volver a pegarlos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lit les fichiers que vous copiez depuis des disques réseau, pour en afficher un aperçu et les recoller."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelfは、ネットワークドライブからコピーしたファイルを読み込み、プレビューの表示と再ペーストに使います。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf leest de bestanden die je van netwerkschijven kopieert, om een voorvertoning te tonen en ze terug te plakken."
+          }
+        }
+      }
+    },
+    "NSRemovableVolumesUsageDescription": {
+      "extractionState": "manual",
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf liest die Dateien, die du von externen Laufwerken kopierst, um eine Vorschau zu zeigen und sie wieder einzusetzen."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf reads the files you copy from external drives, to show a preview and paste them back."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lee los archivos que copias de discos externos para mostrar una vista previa y volver a pegarlos."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf lit les fichiers que vous copiez depuis des disques externes, pour en afficher un aperçu et les recoller."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelfは、外部ドライブからコピーしたファイルを読み込み、プレビューの表示と再ペーストに使います。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Shelf leest de bestanden die je van externe schijven kopieert, om een voorvertoning te tonen en ze terug te plakken."
+          }
+        }
+      }
+    }
+  },
+  "version": "1.0"
+}

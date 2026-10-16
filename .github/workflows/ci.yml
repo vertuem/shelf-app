@@ -1,0 +1,132 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Pull requests from forks run here; the token can only read.
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Build and test (macOS ${{ matrix.macos }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # macOS 15 and 26; macOS 14 is covered by the launch job below.
+          - macos: "15"
+            runner: macos-15
+            xcode: "26.3"
+          - macos: "26"
+            runner: macos-26
+            xcode: "26.6"
+    runs-on: ${{ matrix.runner }}
+    env:
+      SHELF_UI_TESTS: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - name: Select Xcode ${{ matrix.xcode }}
+        run: sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode }}.app"
+      - name: Resolve packages
+        run: swift package resolve
+      - name: Build
+        run: swift build --build-tests
+      - name: No isolated deinits
+        run: Scripts/check-isolated-deinits.sh
+      - name: Test
+        # Serial, so a crash names the test that caused it.
+        run: swift test --skip PerformanceTests
+      - name: Performance budgets
+        # Release build: the budgets describe shipping code.
+        run: swift test -c release -Xswiftc -enable-testing --filter PerformanceTests
+      - name: Backtrace of a crashing test
+        if: failure()
+        run: |
+          BUNDLE=$(find .build -name '*PackageTests.xctest' -type d | head -1)
+          for suite in UIFlowTests ShelfViewModelTests; do
+            lldb --batch -o run -k "thread backtrace all -c 40" -k quit -- "$(xcrun --find xctest)" -XCTest "ShelfTests.$suite" "$BUNDLE" || true
+          done
+      - name: Upload crash reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: crash-reports-macos-${{ matrix.macos }}
+          path: ~/Library/Logs/DiagnosticReports/
+          if-no-files-found: ignore
+      - name: Build the app bundle
+        run: Scripts/build.sh
+      - name: The app records its SDK
+        # Without the fix-up in build.sh, macOS 26 draws the app in compatibility
+        # mode instead of Liquid Glass.
+        run: |
+          SDK=$(otool -l build/Shelf.app/Contents/MacOS/Shelf | awk '/LC_BUILD_VERSION/ { found = 1 } found && $1 == "sdk" { print $2; exit }')
+          echo "Recorded SDK: $SDK"
+          [ "$SDK" = "$(xcrun --sdk macosx --show-sdk-version)" ]
+      - name: Render screens, without the build folder
+        # With .build next to the app, a resource bundle the app cannot find in
+        # itself is still found there; users have no .build.
+        run: |
+          mv .build .build-hidden
+          trap 'mv .build-hidden .build' EXIT
+          build/Shelf.app/Contents/MacOS/Shelf --render-previews previews
+      - uses: actions/upload-artifact@v7
+        with:
+          name: renders-macos-${{ matrix.macos }}
+          path: previews
+      - name: Package the app for the macOS 14 launch check
+        # Built with the same Xcode as releases.
+        if: matrix.macos == '26'
+        run: ditto -c -k --keepParent build/Shelf.app Shelf.zip
+      - uses: actions/upload-artifact@v7
+        if: matrix.macos == '26'
+        with:
+          name: app-macos-26
+          path: Shelf.zip
+
+  launch-macos-14:
+    # macOS 14 is the deployment target, but Xcode 26 does not run on it. The
+    # app built on macOS 26, with the release Xcode, is launched here and draws
+    # every screen, which catches crashes in the version-gated UI code.
+    name: Launch and render (macOS 14)
+    needs: test
+    runs-on: macos-14
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: app-macos-26
+      - name: Unpack
+        run: ditto -x -k Shelf.zip .
+      - name: Launch
+        run: Shelf.app/Contents/MacOS/Shelf --version
+      - name: Render screens
+        run: Shelf.app/Contents/MacOS/Shelf --render-previews previews
+      - uses: actions/upload-artifact@v7
+        with:
+          name: renders-macos-14
+          path: previews
+      - name: Upload crash reports
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: crash-reports-macos-14
+          path: ~/Library/Logs/DiagnosticReports/
+          if-no-files-found: ignore
+
+  lint:
+    name: SwiftLint and SwiftFormat
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v7
+      - name: Install linters
+        run: brew install swiftlint swiftformat
+      - name: SwiftFormat
+        run: swiftformat --lint .
+      - name: SwiftLint
+        run: swiftlint lint --strict

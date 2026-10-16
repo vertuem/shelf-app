@@ -1,0 +1,34 @@
+{
+  "app": "Pages",
+  "expectedKind": "richText",
+  "items": [
+    [
+      {
+        "text": "native",
+        "type": "com.apple.iWork.TSPNativeData"
+      },
+      {
+        "text": "rtfd",
+        "type": "com.apple.flat-rtfd"
+      },
+      {
+        "text": "{\\rtf1\\ansi\\ansicpg1252 {\\fonttbl\\f0 Helvetica;} \\f0 Hello from a document}",
+        "type": "public.rtf"
+      },
+      {
+        "text": "%PDF-1.4",
+        "type": "com.adobe.pdf"
+      },
+      {
+        "base64": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==",
+        "type": "public.tiff"
+      },
+      {
+        "text": "Quarterly report: revenue up twelve percent.",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "pages-text",
+  "note": "A picture of the selection rides along with the text; still rich text."
+}

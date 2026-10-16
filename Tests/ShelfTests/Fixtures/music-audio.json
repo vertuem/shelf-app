@@ -1,0 +1,13 @@
+{
+  "app": "Music",
+  "expectedKind": "audio",
+  "items": [
+    [
+      {
+        "text": "ID3",
+        "type": "public.mp3"
+      }
+    ]
+  ],
+  "name": "music-audio"
+}

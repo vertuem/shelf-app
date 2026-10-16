@@ -1,0 +1,83 @@
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-26
+    env:
+      VERSION: ${{ github.ref_name }}
+      # Secrets cannot appear in `if:`; expose whether they exist instead.
+      HAS_SIGNING: ${{ secrets.DEVELOPER_ID_P12 != '' }}
+      HAS_TAP_TOKEN: ${{ secrets.TAP_TOKEN != '' }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode_26.6.app
+
+      # Without these secrets (forks) the build is signed ad-hoc and not notarized.
+      - name: Import the Developer ID certificate
+        if: env.HAS_SIGNING == 'true'
+        env:
+          P12: ${{ secrets.DEVELOPER_ID_P12 }}
+          P12_PASSWORD: ${{ secrets.DEVELOPER_ID_P12_PASSWORD }}
+        run: |
+          KEYCHAIN="$RUNNER_TEMP/signing.keychain-db"
+          KEYCHAIN_PASSWORD=$(uuidgen)
+          echo "$P12" | base64 --decode > "$RUNNER_TEMP/certificate.p12"
+          security create-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security set-keychain-settings -lut 21600 "$KEYCHAIN"
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security import "$RUNNER_TEMP/certificate.p12" -P "$P12_PASSWORD" -A -t cert -f pkcs12 -k "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple: -k "$KEYCHAIN_PASSWORD" "$KEYCHAIN"
+          security list-keychains -d user -s "$KEYCHAIN" $(security list-keychains -d user | tr -d '"')
+          IDENTITY=$(security find-identity -v -p codesigning "$KEYCHAIN" | grep "Developer ID Application" | head -1 | sed -E 's/.*"(.*)"/\1/')
+          echo "DEVELOPER_ID=$IDENTITY" >> "$GITHUB_ENV"
+
+      - name: Install create-dmg
+        run: brew install create-dmg
+
+      - name: Test
+        run: |
+          swift test --skip PerformanceTests
+          swift test -c release -Xswiftc -enable-testing --filter PerformanceTests
+
+      - name: Build, sign, notarize, package
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+          SHELF_REPOSITORY: ${{ github.repository }}
+        run: Scripts/release.sh "$VERSION" "${{ github.run_number }}"
+
+      - name: Create the GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PRERELEASE=""
+          [[ "$VERSION" == *-* ]] && PRERELEASE="--prerelease"
+          gh release create "$VERSION" dist/*.dmg dist/*.zip dist/SHA256SUMS.txt \
+            --title "Shelf ${VERSION#v}" --notes-file dist/release-notes.md $PRERELEASE
+
+      - name: Bump the cask in the tap
+        if: ${{ !contains(github.ref_name, '-') && env.HAS_TAP_TOKEN == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.TAP_TOKEN }}
+        run: |
+          Scripts/bump-cask.sh "$VERSION" "dist/Shelf-${VERSION#v}.dmg"
+          # gh hands git the token through its credential helper, so it never
+          # lands in a URL or in tap/.git/config.
+          gh auth setup-git
+          git clone https://github.com/vertuem/homebrew-tap.git tap
+          mkdir -p tap/Casks && cp Casks/shelf.rb tap/Casks/shelf.rb
+          cd tap
+          git config user.name "Shelf release bot"
+          git config user.email "actions@github.com"
+          git add Casks/shelf.rb
+          git commit -m "shelf ${VERSION#v}"
+          git push

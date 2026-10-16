@@ -1,0 +1,13 @@
+{
+  "app": "Mail",
+  "expectedKind": "link",
+  "items": [
+    [
+      {
+        "text": "mailto:hello@example.com",
+        "type": "public.utf8-plain-text"
+      }
+    ]
+  ],
+  "name": "mail-mailto"
+}

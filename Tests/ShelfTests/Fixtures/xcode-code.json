@@ -1,0 +1,18 @@
+{
+  "app": "Xcode",
+  "expectedKind": "richText",
+  "items": [
+    [
+      {
+        "text": "let shelf = ShelfPanel()\nshelf.show()",
+        "type": "public.utf8-plain-text"
+      },
+      {
+        "text": "{\\rtf1\\ansi\\ansicpg1252 {\\fonttbl\\f0 Helvetica;} \\f0 Hello from a document}",
+        "type": "public.rtf"
+      }
+    ]
+  ],
+  "name": "xcode-code",
+  "note": "Xcode copies syntax colors as RTF."
+}

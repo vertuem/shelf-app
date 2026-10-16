@@ -1,0 +1,14 @@
+{
+  "app": "Figma",
+  "expectedKind": "richText",
+  "items": [
+    [
+      {
+        "text": "<meta charset='utf-8'><span data-metadata=\"<!--(figmeta)eyJ9(/figmeta)-->\"></span><span data-buffer=\"<!--(figma)ZmlnLWtpd2k(/figma)-->\"></span>",
+        "type": "public.html"
+      }
+    ]
+  ],
+  "name": "figma-layer",
+  "note": "Figma layer copies are HTML with embedded data and no plain text."
+}
