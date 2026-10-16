@@ -54,10 +54,21 @@ final class Updater {
         }
     }
 
-    /// Development and ad-hoc builds never update themselves.
+    /// A local development build: never updates, and says so.
+    var isDevelopmentBuild: Bool { bundleIdentifier.hasSuffix(".dev") }
+
+    /// A release that Apple did not sign (no Developer ID): it cannot verify an
+    /// update the way the updater requires, so new versions come from the
+    /// releases page instead.
+    var isUnsignedRelease: Bool { !isDevelopmentBuild && teamIdentifier == nil }
+
+    /// Development and unsigned builds never update themselves.
     var disabledReason: String? {
-        if bundleIdentifier.hasSuffix(".dev") || teamIdentifier == nil {
+        if isDevelopmentBuild {
             return String(localized: "Development build: updates are off.")
+        }
+        if isUnsignedRelease {
+            return String(localized: "New versions are on the releases page.")
         }
         return nil
     }

@@ -6,6 +6,8 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-17
+
 ### Added
 - The shelf: a full-width, non-activating glass panel at the bottom of the screen with color-coded cards, source app icons, relative times and keyboard navigation.
 - Capture of text, rich text, links, images, files, colors and audio, with every pasteboard type stored losslessly, including multi-file copies.

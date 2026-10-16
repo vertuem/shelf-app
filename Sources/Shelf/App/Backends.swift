@@ -140,7 +140,7 @@ extension AppServices: SettingsBackend {
         await runPasteImport(from: url)
     }
 
-    var isDevelopmentBuild: Bool { updater.isDisabled }
+    var isDevelopmentBuild: Bool { updater.isDevelopmentBuild }
     var updateStatus: String { updater.statusText }
 
     var isCheckingForUpdates: Bool {
@@ -151,6 +151,10 @@ extension AppServices: SettingsBackend {
     }
 
     func checkForUpdates() {
+        if updater.isUnsignedRelease {
+            NSWorkspace.shared.open(Brand.repositoryURL.appendingPathComponent("releases"))
+            return
+        }
         Task {
             await updater.check(userInitiated: true)
             if case .available(let release) = updater.state {

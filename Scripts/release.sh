@@ -75,6 +75,10 @@ awk -v version="$VERSION" '
   printing { print }
 ' CHANGELOG.md > "$DIST/release-notes.md"
 [[ -s "$DIST/release-notes.md" ]] || echo "See CHANGELOG.md." > "$DIST/release-notes.md"
+if ! $CAN_NOTARIZE; then
+  NOTES=$(cat "$DIST/release-notes.md")
+  printf '%s\n\n%s\n' "**Install:** open the DMG and drag Shelf to Applications. This build is not notarized by Apple: the first time, open System Settings › Privacy & Security and click **Open Anyway**." "$NOTES" > "$DIST/release-notes.md"
+fi
 
 echo "==> dist/"
 ls -la "$DIST"

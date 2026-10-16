@@ -31,13 +31,11 @@ Press **⇧⌘V**, arrow to a card, press **Return**, and it is pasted where you
 
 ## Install
 
-```sh
-brew install vertuem/tap/shelf
-```
+1. Download `Shelf-<version>.dmg` from the [latest release](https://github.com/vertuem/shelf-app/releases/latest).
+2. Open it and drag Shelf to Applications.
+3. Open Shelf. Releases are not notarized by Apple yet, so the first time macOS says it cannot check the app: open System Settings, Privacy & Security, and click **Open Anyway**.
 
-Or download the DMG from [Releases](https://github.com/vertuem/shelf-app/releases) and drag Shelf to Applications.
-
-Shelf needs macOS 14 Sonoma or later on Apple silicon, and updates itself from GitHub Releases. Building it yourself? See [Build from source](#build-from-source).
+Shelf needs macOS 14 Sonoma or later on Apple silicon. New versions appear on the [releases page](https://github.com/vertuem/shelf-app/releases); Settings, About, Check for Updates opens it. Building it yourself? See [Build from source](#build-from-source).
 
 <img align="right" width="330" src="docs/images/onboarding.png" alt="The welcome tour">
 
@@ -231,13 +229,9 @@ screencapture -x -l <window number it prints> settings.png
 
 `SHELF_SHOW` takes `shelf`, `stack`, `onboarding[:0|1|2]` or `settings[:general|privacy|shortcuts|about]`, and `SHELF_APPEARANCE=dark` switches to dark mode. Add `-showDuringScreenSharing YES` for the shelf and the Paste Stack, which are hidden from captures by default.
 
-### Unsigned builds
+### Signing
 
-Official releases are signed with an Apple Developer ID and notarized by Apple. Builds from source and from forks are signed ad-hoc, and Gatekeeper blocks them the first time. To open one, open Shelf, dismiss the warning, then click **Open Anyway** in System Settings, Privacy & Security. Or remove the quarantine flag:
-
-```sh
-xattr -dr com.apple.quarantine /Applications/Shelf.app
-```
+Without signing secrets, `Scripts/release.sh` signs ad-hoc and skips notarization, which is how releases are built today. With `DEVELOPER_ID` and the notary secrets set in the repository, the same script signs with the Developer ID, notarizes and staples, and the in-app updater turns on. To skip the Open Anyway step on a build you trust, remove the quarantine flag: `xattr -dr com.apple.quarantine /Applications/Shelf.app`.
 
 ## Why the name
 

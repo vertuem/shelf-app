@@ -8001,6 +8001,40 @@
         }
       }
     },
+    "New versions are on the releases page.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Neue Versionen gibt es auf der Release-Seite."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las versiones nuevas están en la página de versiones."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les nouvelles versions sont sur la page des versions."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "新しいバージョンはリリースページにあります。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nieuwe versies staan op de releasepagina."
+          }
+        }
+      }
+    },
     "Next": {
       "localizations": {
         "de": {
