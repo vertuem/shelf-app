@@ -45,8 +45,7 @@ public final class ImageTextRecognizer {
     }
 
     func recognizeIfAllowed(_ item: ClipItem) async {
-        guard preferences.recognizeTextInImages, let data = await imageData(for: item) else { return }
-        guard let text = await Self.recognize(in: data) else { return }
+        guard preferences.recognizeTextInImages, let data = await imageData(for: item), let text = await Self.recognize(in: data) else { return }
         try? await store.setOCRText(item.id, text: text)
     }
 

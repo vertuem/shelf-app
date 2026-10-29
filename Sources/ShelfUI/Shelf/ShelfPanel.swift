@@ -385,8 +385,8 @@ public final class ShelfPanelController {
     /// scroll sideways and pass through untouched.
     private func handleScroll(_ event: NSEvent) -> NSEvent? {
         guard model.layout.isHorizontal, !event.hasPreciseScrollingDeltas,
-              event.scrollingDeltaX == 0, event.scrollingDeltaY != 0 else { return event }
-        guard let turned = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 2,
+              event.scrollingDeltaX == 0, event.scrollingDeltaY != 0,
+              let turned = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 2,
                                    wheel1: 0, wheel2: Int32(event.scrollingDeltaY.rounded()), wheel3: 0) else { return event }
         turned.location = event.cgEvent?.location ?? turned.location
         return NSEvent(cgEvent: turned)
