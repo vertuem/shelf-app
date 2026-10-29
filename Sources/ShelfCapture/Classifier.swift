@@ -62,8 +62,7 @@ public enum Classifier {
     /// The URL if `text` is exactly one URL with a scheme and a host (or a mailto).
     public static func singleURL(in text: String) -> URL? {
         let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, trimmed.count < 4_096, !trimmed.contains(where: \.isWhitespace) else { return nil }
-        guard let components = URLComponents(string: trimmed), let scheme = components.scheme?.lowercased() else { return nil }
+        guard !trimmed.isEmpty, trimmed.count < 4_096, !trimmed.contains(where: \.isWhitespace), let components = URLComponents(string: trimmed), let scheme = components.scheme?.lowercased() else { return nil }
         switch scheme {
         case "http", "https", "ftp", "ssh", "sftp":
             guard let host = components.host, !host.isEmpty else { return nil }

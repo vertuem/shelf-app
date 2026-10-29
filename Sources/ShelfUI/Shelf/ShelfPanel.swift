@@ -1,5 +1,6 @@
 import AppKit
 import Carbon.HIToolbox
+import KeyboardShortcuts
 import ShelfCore
 import SwiftUI
 
@@ -62,6 +63,12 @@ public final class ShelfPanelController {
     /// quick ⌘F or ⌘P does not flash them either.
     var hintDelay: Duration = .milliseconds(350)
     private var hintTask: Task<Void, Never>?
+    private var escapeTask: Task<Void, Never>?
+    private var isTrackingMenu = false
+    /// When the shelf last opened: app switches caused by the opening itself
+    /// (a click on the menu bar icon) must not close it again.
+    private var shownAt = Date.distantPast
+    private var systemObservers: [NSObjectProtocol] = []
     public private(set) var isVisible = false
     /// The app that was frontmost when the shelf opened: the paste target.
     public private(set) var targetBundleID: String?
@@ -73,9 +80,16 @@ public final class ShelfPanelController {
         hosting.sizingOptions = []
         panel.contentView = hosting
         panel.setAccessibilityLabel(String(localized: "Clipboard history"))
+        observeSystem()
     }
 
     public func toggle() {
+        reconcile()
+        if isVisible, !panel.isKeyWindow {
+            // Open but the keyboard went elsewhere: the press means "let me type here".
+            panel.makeKey()
+            if panel.isKeyWindow { return }
+        }
         if isVisible {
             hide()
         } else {
@@ -83,10 +97,26 @@ public final class ShelfPanelController {
         }
     }
 
+    /// The system can take the panel off screen behind the controller's back
+    /// (Hide Others, a full-screen Space closing). AppKit may even still call
+    /// it visible while the window server has it on no Space. Without this the
+    /// shelf counted as open, so ⇧⌘V and `shelf-app://open` did nothing.
+    public func reconcile() {
+        guard isVisible, !(panel.isVisible && panel.isOnActiveSpace) else { return }
+        Log.ui.notice("The shelf was off screen while marked open")
+        hide(animated: false)
+    }
+
     /// `takeFocus: false` shows the shelf without taking the keyboard, for review captures.
     public func show(takeFocus: Bool = true) {
+        reconcile()
         guard !isVisible else { return }
         isVisible = true
+        shownAt = Date()
+        // No menu can be open while the shelf opens; a missed end-of-tracking
+        // notification must not keep Escape released for good.
+        isTrackingMenu = false
+        if NSApp.isHidden { NSApp.unhideWithoutActivation() }
         targetBundleID = NSWorkspace.shared.frontmostApplication?.bundleIdentifier
         let layout = position()
         model.layout = layout
@@ -99,6 +129,9 @@ public final class ShelfPanelController {
         presentation.horizontalOffset = horizontal
         presentation.scale = scale
         presentation.opacity = 0
+        // A panel AppKit still counts as ordered in (a fade that never finished,
+        // a lost Space) would ignore orderFront; take it out first.
+        if panel.isVisible { panel.orderOut(nil) }
         panel.orderFrontRegardless()
         if takeFocus { panel.makeKey() }
         withAnimation(reduceMotion ? .easeOut(duration: 0.16) : .spring(duration: 0.16, bounce: 0.2)) {
@@ -109,6 +142,26 @@ public final class ShelfPanelController {
         }
         armHints(currentModifiers: NSEvent.modifierFlags)
         installMonitors()
+        if takeFocus {
+            claimEscape()
+            ensureKey()
+        }
+    }
+
+    /// Over a full-screen app the panel is still joining that space when
+    /// `makeKey()` runs, and the keyboard stayed with the app underneath. Ask
+    /// again once it is on screen.
+    private func ensureKey() {
+        Task { [weak self] in
+            for delay in [Duration.milliseconds(50), .milliseconds(200)] {
+                try? await Task.sleep(for: delay)
+                guard let self, self.isVisible else { return }
+                if self.panel.isKeyWindow { return }
+                self.panel.makeKey()
+            }
+            guard let self, self.isVisible, !self.panel.isKeyWindow else { return }
+            Log.ui.notice("The shelf opened without the keyboard")
+        }
     }
 
     /// Where the content sits before it slides in: 24 points off its screen edge,
@@ -130,6 +183,7 @@ public final class ShelfPanelController {
         isVisible = false
         hintTask?.cancel()
         removeMonitors()
+        releaseEscape()
         model.didHide()
         let reduceMotion = NSWorkspace.shared.accessibilityDisplayShouldReduceMotion
         if animated {
@@ -141,6 +195,13 @@ public final class ShelfPanelController {
                 presentation.opacity = 0
             } completion: { [weak self] in
                 guard let self, !self.isVisible else { return }
+                self.panel.orderOut(nil)
+            }
+            // SwiftUI may never call the completion for a window that is not
+            // being drawn; the panel must still leave the screen.
+            Task { [weak self] in
+                try? await Task.sleep(for: .milliseconds(300))
+                guard let self, !self.isVisible, self.panel.isVisible else { return }
                 self.panel.orderOut(nil)
             }
         } else {
@@ -212,6 +273,87 @@ public final class ShelfPanelController {
         clickMonitor = nil
     }
 
+    // MARK: Escape
+
+    /// While the shelf is open, Escape is a system hot key. The panel does not
+    /// always hold the keyboard (over a full-screen app, after ⌘-Tab or a drag
+    /// out), and a plain Escape then reached the app underneath, where it left
+    /// full screen. Released while a menu is open, so Escape still closes the menu.
+    private func claimEscape() {
+        guard escapeTask == nil, !isTrackingMenu else { return }
+        escapeTask = Task { [weak self] in
+            for await _ in KeyboardShortcuts.events(.keyDown, for: KeyboardShortcuts.Shortcut(.escape)) {
+                self?.handleEscape()
+            }
+        }
+    }
+
+    private func releaseEscape() {
+        escapeTask?.cancel()
+        escapeTask = nil
+    }
+
+    private func handleEscape() {
+        guard panel.isVisible else {
+            reconcile()
+            return
+        }
+        // Another Shelf window has the keyboard (the delete alert, the Paste Stack,
+        // Quick Look): the hot key took Escape from it, so pass it on.
+        if let window = NSApp.keyWindow, window !== panel, window.isVisible,
+           let escape = NSEvent.keyEvent(with: .keyDown, location: .zero, modifierFlags: [],
+                                         timestamp: ProcessInfo.processInfo.systemUptime, windowNumber: window.windowNumber,
+                                         context: nil, characters: "\u{1b}", charactersIgnoringModifiers: "\u{1b}",
+                                         isARepeat: false, keyCode: UInt16(kVK_Escape)) {
+            NSApp.postEvent(escape, atStart: false)
+            return
+        }
+        // Escape cancels a Japanese, Chinese or Korean composition before anything else.
+        if let editor = fieldEditor, editor.hasMarkedText() {
+            editor.inputContext?.discardMarkedText()
+            editor.unmarkText()
+            return
+        }
+        model.escape()
+    }
+
+    private func observeSystem() {
+        let center = NotificationCenter.default
+        systemObservers = [
+            center.addObserver(forName: NSMenu.didBeginTrackingNotification, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    self?.isTrackingMenu = true
+                    self?.releaseEscape()
+                }
+            },
+            center.addObserver(forName: NSMenu.didEndTrackingNotification, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated {
+                    guard let self else { return }
+                    self.isTrackingMenu = false
+                    if self.isVisible { self.claimEscape() }
+                }
+            },
+            // Hide Others hides the shelf too; keep the controller in step.
+            center.addObserver(forName: NSApplication.didHideNotification, object: nil, queue: .main) { [weak self] _ in
+                MainActor.assumeIsolated { self?.hide(animated: false) }
+            },
+            // Another app becoming active (⌘-Tab, Open Link) takes the keyboard; close
+            // the shelf as a click outside does, rather than leave it open and deaf.
+            NSWorkspace.shared.notificationCenter.addObserver(
+                forName: NSWorkspace.didActivateApplicationNotification, object: nil, queue: .main
+            ) { [weak self] note in
+                let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+                guard app?.processIdentifier != ProcessInfo.processInfo.processIdentifier else { return }
+                MainActor.assumeIsolated {
+                    // The app being pasted into coming back to the front is not a switch.
+                    guard let self, app?.bundleIdentifier != self.targetBundleID,
+                          Date().timeIntervalSince(self.shownAt) > 0.5 else { return }
+                    self.hide()
+                }
+            },
+        ]
+    }
+
     /// Armed straight away when no modifier is down as the shelf opens (the menu
     /// bar, `shelf-app://open`); otherwise once the opening shortcut is let go.
     func armHints(currentModifiers: NSEvent.ModifierFlags) {
@@ -243,8 +385,8 @@ public final class ShelfPanelController {
     /// scroll sideways and pass through untouched.
     private func handleScroll(_ event: NSEvent) -> NSEvent? {
         guard model.layout.isHorizontal, !event.hasPreciseScrollingDeltas,
-              event.scrollingDeltaX == 0, event.scrollingDeltaY != 0 else { return event }
-        guard let turned = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 2,
+              event.scrollingDeltaX == 0, event.scrollingDeltaY != 0,
+              let turned = CGEvent(scrollWheelEvent2Source: nil, units: .line, wheelCount: 2,
                                    wheel1: 0, wheel2: Int32(event.scrollingDeltaY.rounded()), wheel3: 0) else { return event }
         turned.location = event.cgEvent?.location ?? turned.location
         return NSEvent(cgEvent: turned)

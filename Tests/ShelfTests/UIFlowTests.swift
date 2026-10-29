@@ -43,7 +43,7 @@ final class UIFlowTests: XCTestCase {
         await flow.finish()
         await flow.finish() // a second Done does nothing
         XCTAssertEqual(backend.snippets, 1)
-        XCTAssertEqual(backend.finished, [true], "skipping makes paste mode default to the clipboard")
+        XCTAssertEqual(backend.finished, [true])
     }
 
     func testOnboardingWithAccessibilityGranted() async {
@@ -83,7 +83,7 @@ final class UIFlowTests: XCTestCase {
         XCTAssertEqual(boards.map(\.name), ["Snippets"], "one click, one board")
         services.finishOnboarding(accessibilitySkipped: true)
         XCTAssertTrue(defaults.bool(forKey: PrefKey.onboardingCompleted))
-        XCTAssertEqual(services.preferences.pasteMode, .toClipboard)
+        XCTAssertEqual(services.preferences.pasteMode, .toActiveApp, "granting Accessibility later must be enough to paste")
     }
 
     /// Every setting: its key, its default, and that a change persists.

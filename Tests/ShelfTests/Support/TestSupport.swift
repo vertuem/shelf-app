@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 import ShelfCore
 import XCTest
@@ -63,15 +64,13 @@ enum Make {
     }
 }
 
-import CryptoKit
-
 enum SHA {
     static func digest(_ data: Data) -> SHA256.Digest { SHA256.hash(data: data) }
 }
 
+@MainActor
 extension XCTestCase {
     /// Polls until `condition` holds or the timeout passes.
-    @MainActor
     func wait(timeout: TimeInterval = 2, _ condition: @escaping @MainActor () async -> Bool) async -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {

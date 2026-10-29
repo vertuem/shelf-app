@@ -84,10 +84,12 @@ final class UpdaterTests: XCTestCase {
         XCTAssertEqual(releases.first?.checksums?.name, "SHA256SUMS.txt")
     }
 
-    func testDevelopmentBuildsDoNotUpdate() {
-        let updater = Updater(preferences: Preferences(defaults: UserDefaults(suiteName: "updater-\(UUID())")!))
-        // The test runner is not a Developer ID signed release.
-        XCTAssertTrue(updater.isDisabled)
+    func testUpdateModeFollowsTheSignature() {
+        XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf.dev", teamIdentifier: "ABCDE12345"), .off)
+        XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf.dev", teamIdentifier: nil), .off)
+        XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf", teamIdentifier: nil), .notify,
+                       "an unsigned release still checks and offers new versions")
+        XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf", teamIdentifier: "ABCDE12345"), .install)
     }
 
     func testPreviousBundleIsKeptForOneLaunch() throws {

@@ -251,6 +251,7 @@ private final class PreviewBackend: SettingsBackend, OnboardingBackend, MenuBarB
     func importFromPaste() async {}
     var versionString = "Version 1.0.0 (412)"
     var isDevelopmentBuild = false
+    var updatesInstallByHand = false
     var updateStatus = "\(Brand.name) is up to date."
     var isCheckingForUpdates = false
     func checkForUpdates() {}

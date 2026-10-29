@@ -490,6 +490,18 @@ final class ShelfViewModelTests: XCTestCase {
         XCTAssertEqual(closeCount, 1)
     }
 
+    func testEscapeCancelsThePinboardDeletionInsteadOfClosing() async throws {
+        let board = try await env.store.createPinboard(name: "Work", color: .blue, icon: "star")
+        await model.start()
+        model.prepareForShow()
+        model.requestDeletion(of: board)
+        model.escape()
+        XCTAssertNil(model.pinboardPendingDeletion)
+        XCTAssertEqual(closeCount, 0)
+        let boards = try await env.store.pinboards()
+        XCTAssertEqual(boards.map(\.name), ["Work"], "Escape is Cancel, not Delete")
+    }
+
     func testDeleteRemovesEverySelectedCardWithOneUndo() async throws {
         try await populate(["a", "b", "c"])
         await model.start()
@@ -598,7 +610,9 @@ final class ShelfViewModelTests: XCTestCase {
         XCTAssertEqual(model.suggestions.map(\.token), ["app:Safari"])
         model.acceptSuggestion(model.suggestions[0])
         XCTAssertEqual(model.filterChips, ["app:Safari"])
-        XCTAssertEqual(model.searchText, "hello", "the free text before the filter stays")
+        XCTAssertEqual(model.searchText, "hello ", "the free text before the filter stays, with its space")
+        model.searchText += "world"
+        XCTAssertEqual(model.searchText, "hello world", "the next word does not join the last one")
     }
 
     func testEscapeDismissesSuggestionsBeforeClearingTheSearch() async throws {

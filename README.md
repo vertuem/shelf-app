@@ -35,7 +35,7 @@ Press **⇧⌘V**, arrow to a card, press **Return**, and it is pasted where you
 2. Open it and drag Shelf to Applications.
 3. Open Shelf. Releases are not notarized by Apple yet, so the first time macOS says it cannot check the app: open System Settings, Privacy & Security, and click **Open Anyway**.
 
-Shelf needs macOS 14 Sonoma or later on Apple silicon. New versions appear on the [releases page](https://github.com/vertuem/shelf-app/releases); Settings, About, Check for Updates opens it. Building it yourself? See [Build from source](#build-from-source).
+Shelf needs macOS 14 Sonoma or later on Apple silicon. Shelf checks the [releases page](https://github.com/vertuem/shelf-app/releases) when it starts and every six hours, shows what is new, and downloads the new version for you to drag to Applications (Settings, About, Check for Updates asks right away). Version 0.1.0 cannot check: download a newer version once by hand. Building it yourself? See [Build from source](#build-from-source).
 
 <img align="right" width="330" src="docs/images/onboarding.png" alt="The welcome tour">
 
@@ -112,7 +112,7 @@ Fill in a form from a spreadsheet without switching apps six times:
 
 ### And more
 
-- **Several cards at once.** Hold Shift with the arrows, or ⌘-click, then press Return to paste them as lines. Files paste as separate files.
+- **Several cards at once.** Hold Shift with the arrows, or ⌘-click, then press Return to paste them all. Text pastes as lines, images and other cards one after another, files as separate files.
 - **Paste as.** Plain text, UPPERCASE, lowercase, Title Case, snake_case or kebab-case, from the card menu. ⌘Return always pastes plain text.
 - **Copy for AI.** Turn the selected cards, or a whole pinboard, into one document to paste into a chat.
 - **Quick Look and drag-out.** Space previews a card; drag a card into any app.
@@ -231,7 +231,7 @@ screencapture -x -l <window number it prints> settings.png
 
 ### Signing
 
-Without signing secrets, `Scripts/release.sh` signs ad-hoc and skips notarization, which is how releases are built today. With `DEVELOPER_ID` and the notary secrets set in the repository, the same script signs with the Developer ID, notarizes and staples, and the in-app updater turns on. To skip the Open Anyway step on a build you trust, remove the quarantine flag: `xattr -dr com.apple.quarantine /Applications/Shelf.app`.
+Without signing secrets, `Scripts/release.sh` signs ad-hoc and skips notarization, which is how releases are built today. With `DEVELOPER_ID` and the notary secrets set in the repository, the same script signs with the Developer ID, notarizes and staples, and the in-app updater installs updates itself instead of only offering the download. To skip the Open Anyway step on a build you trust, remove the quarantine flag: `xattr -dr com.apple.quarantine /Applications/Shelf.app`.
 
 ## Why the name
 

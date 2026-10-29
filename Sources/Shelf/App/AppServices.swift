@@ -163,6 +163,7 @@ final class AppServices {
             } else {
                 registerLoginItemOnce(announce: true)
                 launchMaccyOffer()
+                AccessibilityRecovery.run(defaults: preferences.defaults, build: appBuild, isTrusted: SystemAccessibility().isTrusted)
             }
         }
     }
@@ -339,7 +340,8 @@ final class AppServices {
         await perform(request, items: [item])
     }
 
-    /// One card, or several: files as separate files, the rest as lines of plain text.
+    /// One card, or several: files as separate files, text as lines of plain text,
+    /// and with images among them, one card after another.
     private func perform(_ request: PasteRequest, items: [ClipItem]) async {
         let resolved = await resolvingPromises(items)
         let outcome = await paster.perform(Self.pasterRequest(request), items: resolved, targetBundleID: shelf.targetBundleID) { [weak self] in
@@ -376,13 +378,30 @@ final class AppServices {
         hud.show(String(localized: "Copied \(items.count) items for AI"), symbol: "sparkles")
     }
 
+    /// "0.1.1 (12)": the version and build, which change with every release.
+    private var appBuild: String {
+        "\(updater.currentVersion) (\(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "0"))"
+    }
+
     private func report(_ outcome: Paster.Outcome) {
         switch outcome {
         case .pasted:
             play(.paste)
+            // A paste proves Accessibility, also when it was granted after launch.
+            AccessibilityRecovery.recordGranted(defaults: preferences.defaults, build: appBuild)
         case .copied(.requested):
             play(.paste)
             hud.show(String(localized: "Copied"))
+        case .copied(.accessibilityMissing):
+            // Says why Return copied instead of pasting. An ad-hoc build loses its
+            // grant on every rebuild while System Settings still shows it on.
+            play(.paste)
+            hud.show(String(localized: "Copied. \(Brand.name) needs Accessibility to paste for you."),
+                     symbol: "lock.shield", duration: .seconds(3))
+        case .copied(.manualPasteApp(let bundleID)):
+            play(.paste)
+            let name = SourceResolver.appName(for: bundleID) ?? bundleID
+            hud.show(String(localized: "Copied. Press ⌘V to paste in \(name)."))
         case .copied:
             play(.paste)
             hud.show(String(localized: "Copied. Press ⌘V to paste."))
@@ -606,6 +625,7 @@ final class AppServices {
         case "resume":
             resume()
         case "open", "shelf":
+            shelf.reconcile()
             if !shelf.isVisible { toggleShelf() }
         case "stack":
             if !pasteStack.isOpen { togglePasteStack() }
