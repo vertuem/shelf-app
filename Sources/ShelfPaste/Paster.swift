@@ -48,6 +48,8 @@ public final class Paster {
     private let accessibility: any AccessibilityChecking
     /// How long the target app gets to read the pasteboard before the old contents return.
     public var restoreDelay: Duration = .milliseconds(150)
+    /// Between the pastes of several cards that go in one at a time.
+    public var pasteInterval: Duration = .milliseconds(250)
 
     public init(
         store: Store,
@@ -106,8 +108,9 @@ public final class Paster {
 
     /// Several cards at once (Shift with the arrows, then Return). Files become
     /// one pasteboard item per file, so Finder receives them as separate files;
-    /// everything else is joined as plain text, one card per line, in strip order.
-    /// Cards with no textual form (images, audio) are left out.
+    /// text is joined as plain text, one card per line, in strip order. With an
+    /// image or audio card among them, the cards are pasted one after another
+    /// (runs of text still as lines), since most apps take one image per paste.
     @discardableResult
     public func perform(
         _ request: Request,
@@ -130,23 +133,102 @@ public final class Paster {
         }
         let reason = copyOnlyReason(for: request, targetBundleID: targetBundleID)
         let saved = reason == nil && preferences.restorePreviousClipboard ? PasteboardWriter.saveContents(of: pasteboard) : nil
+        let transform: TextTransform? = if case .transformed(let transform) = request { transform } else { nil }
 
         let wrote: Bool
         if items.allSatisfy({ $0.kind == .file && !$0.missingFiles }) {
             wrote = PasteboardWriter.write(Self.renumbered(payloads.map(\.representations)), to: pasteboard)
         } else {
-            let texts = payloads.compactMap { PasteboardWriter.plainText(for: $0.item, representations: $0.representations) }
-            guard !texts.isEmpty else {
+            let chunks = Self.chunks(payloads, transform: transform)
+            if chunks.count == 1, case .text(let text) = chunks[0] {
+                wrote = PasteboardWriter.writePlainText(text, to: pasteboard)
+            } else {
                 closeShelf()
-                return .failed
+                guard !chunks.isEmpty else { return .failed }
+                guard reason == nil else {
+                    // Copy only: most apps read just the first pasteboard item, so all the
+                    // text goes there as lines; the other cards follow for the apps that take several.
+                    guard PasteboardWriter.write(Self.renumbered(Self.copyGroups(chunks)), to: pasteboard) else { return .failed }
+                    return await finish(ids: payloads.map(\.item.id), reason: reason, saved: nil)
+                }
+                return await pasteInTurn(chunks, ids: payloads.map(\.item.id), saved: saved)
             }
-            let joined = texts.joined(separator: "\n")
-            let transform: TextTransform? = if case .transformed(let transform) = request { transform } else { nil }
-            wrote = PasteboardWriter.writePlainText(transform?.apply(joined) ?? joined, to: pasteboard)
         }
         closeShelf()
         guard wrote else { return .failed }
         return await finish(ids: payloads.map(\.item.id), reason: reason, saved: saved)
+    }
+
+    /// One paste's worth of several cards: consecutive text joined as lines, or one card with no text.
+    enum Chunk: Equatable {
+        case text(String)
+        case card([ClipRepresentation])
+
+        /// What goes on the pasteboard for this chunk: text already in plain or transformed form.
+        var representations: [ClipRepresentation] {
+            switch self {
+            case .text(let text): [ClipRepresentation(uti: PasteboardTypes.plainText, data: Data(text.utf8))]
+            case .card(let representations): representations
+            }
+        }
+    }
+
+    /// Pasteboard items for copying several chunks at once: the text first, joined, then each card.
+    static func copyGroups(_ chunks: [Chunk]) -> [[ClipRepresentation]] {
+        var texts: [String] = []
+        var cards: [[ClipRepresentation]] = []
+        for chunk in chunks {
+            switch chunk {
+            case .text(let text): texts.append(text)
+            case .card: cards.append(chunk.representations)
+            }
+        }
+        let text = texts.isEmpty ? [] : [Chunk.text(texts.joined(separator: "\n")).representations]
+        return text + cards
+    }
+
+    static func chunks(_ payloads: [(item: ClipItem, representations: [ClipRepresentation])], transform: TextTransform?) -> [Chunk] {
+        var chunks: [Chunk] = []
+        var lines: [String] = []
+        func flush() {
+            guard !lines.isEmpty else { return }
+            let joined = lines.joined(separator: "\n")
+            chunks.append(.text(transform?.apply(joined) ?? joined))
+            lines = []
+        }
+        for payload in payloads {
+            if let text = PasteboardWriter.plainText(for: payload.item, representations: payload.representations) {
+                lines.append(text)
+            } else if !payload.representations.isEmpty {
+                flush()
+                chunks.append(.card(payload.representations))
+            }
+        }
+        flush()
+        return chunks
+    }
+
+    /// Pastes each chunk with its own ⌘V, waiting `pasteInterval` between them
+    /// so the target app has read one before the next replaces it.
+    private func pasteInTurn(_ chunks: [Chunk], ids: [UUID], saved: [ClipRepresentation]?) async -> Outcome {
+        var pasted = 0
+        for chunk in chunks {
+            if pasted > 0 { try? await Task.sleep(for: pasteInterval) }
+            let wrote = switch chunk {
+            case .text(let text): PasteboardWriter.writePlainText(text, to: pasteboard)
+            case .card(let representations): PasteboardWriter.write(representations, to: pasteboard)
+            }
+            guard wrote else { continue }
+            keystrokes.sendPaste()
+            pasted += 1
+        }
+        guard pasted > 0 else { return .failed }
+        for id in ids.reversed() { try? await store.markUsed(id) }
+        if let saved {
+            try? await Task.sleep(for: restoreDelay)
+            PasteboardWriter.restore(saved, to: pasteboard)
+        }
+        return .pasted
     }
 
     /// Concatenates several items' representations with fresh, consecutive item indexes.
@@ -167,13 +249,13 @@ public final class Paster {
 
     private func finish(ids: [UUID], reason: CopyReason?, saved: [ClipRepresentation]?) async -> Outcome {
         if let reason {
-            for id in ids { try? await store.markUsed(id) }
+            for id in ids.reversed() { try? await store.markUsed(id) }
             return .copied(reason)
         }
         // The keystroke goes first: waiting on the store here could delay ⌘V
         // until the user has moved on to another window.
         keystrokes.sendPaste()
-        for id in ids { try? await store.markUsed(id) }
+        for id in ids.reversed() { try? await store.markUsed(id) }
         if let saved {
             try? await Task.sleep(for: restoreDelay)
             PasteboardWriter.restore(saved, to: pasteboard)

@@ -8,11 +8,14 @@ import XCTest
 final class RecordingKeystrokes: KeystrokeSending {
     var pastes = 0
     var pasteboardAtKeystroke: String?
+    /// The pasteboard's types at each keystroke, for several cards pasted in turn.
+    var typesAtKeystrokes: [[String]] = []
     weak var pasteboard: NSPasteboard?
 
     func sendPaste() {
         pastes += 1
         pasteboardAtKeystroke = pasteboard?.string(forType: .string)
+        typesAtKeystrokes.append(pasteboard?.types?.map(\.rawValue) ?? [])
     }
 }
 
@@ -44,6 +47,7 @@ final class PasterTests: XCTestCase {
         let paster = Paster(store: env.store, preferences: env.preferences, pasteboard: pasteboard,
                             keystrokes: keystrokes, accessibility: FakeAccessibility(isTrusted: trusted))
         paster.restoreDelay = .milliseconds(20)
+        paster.pasteInterval = .milliseconds(1)
         return paster
     }
 
@@ -167,13 +171,27 @@ final class PasterTests: XCTestCase {
     func testSeveralTextCardsPasteAsLinesInOrder() async throws {
         let first = try await env.store.insert(Make.text("one"))
         let second = try await storeRichItem()
-        let image = try await env.store.insert(Make.image())
-        let outcome = await makePaster().perform(.paste, items: [first, second, image], targetBundleID: "com.apple.TextEdit")
+        let outcome = await makePaster().perform(.paste, items: [first, second], targetBundleID: "com.apple.TextEdit")
         XCTAssertEqual(outcome, .pasted)
-        XCTAssertEqual(pasteboard.string(forType: .string), "one\nBold", "the image has no text and is left out")
+        XCTAssertEqual(pasteboard.string(forType: .string), "one\nBold")
         XCTAssertEqual(pasteboard.pasteboardItems?.count, 1)
         XCTAssertNotNil(pasteboard.pasteboardItems?.first?.data(forType: PasteboardWriter.marker))
         XCTAssertEqual(keystrokes.pastes, 1)
+    }
+
+    func testTextAndImagesPasteOneAfterAnotherInOrder() async throws {
+        let first = try await env.store.insert(Make.text("one"))
+        let second = try await storeRichItem()
+        let image = try await env.store.insert(Make.image())
+        let third = try await env.store.insert(Make.text("three"))
+        var closed = 0
+        let outcome = await makePaster().perform(.paste, items: [first, second, image, third], targetBundleID: "com.apple.TextEdit") { closed += 1 }
+        XCTAssertEqual(outcome, .pasted)
+        XCTAssertEqual(closed, 1)
+        XCTAssertEqual(keystrokes.pastes, 3, "the text before the image as lines, the image, then the text after it")
+        XCTAssertTrue(keystrokes.typesAtKeystrokes[0].contains(NSPasteboard.PasteboardType.string.rawValue))
+        XCTAssertTrue(keystrokes.typesAtKeystrokes[1].contains("public.png"))
+        XCTAssertEqual(keystrokes.pasteboardAtKeystroke, "three")
     }
 
     func testSeveralFileCardsPasteAsSeparateFiles() async throws {
@@ -201,14 +219,64 @@ final class PasterTests: XCTestCase {
         XCTAssertNotNil(pasteboard.data(forType: .rtf))
     }
 
-    func testOnlyImagesSelectedFails() async throws {
+    func testSeveralImagesPasteOneAfterAnother() async throws {
+        env.defaults.set(true, forKey: PrefKey.restorePreviousClipboard)
         let one = try await env.store.insert(Make.image(seed: 1))
         let two = try await env.store.insert(Make.image(seed: 2))
+        pasteboard.clearContents()
+        pasteboard.setString("what the user had", forType: .string)
         var closed = 0
         let outcome = await makePaster().perform(.paste, items: [one, two], targetBundleID: nil) { closed += 1 }
-        XCTAssertEqual(outcome, .failed)
+        XCTAssertEqual(outcome, .pasted)
         XCTAssertEqual(closed, 1)
+        XCTAssertEqual(keystrokes.pastes, 2)
+        XCTAssertEqual(keystrokes.typesAtKeystrokes.filter { $0.contains("public.png") }.count, 2)
+        XCTAssertEqual(pasteboard.string(forType: .string), "what the user had", "restored once, after the last paste")
+    }
+
+    func testSeveralImagesWithoutAccessibilityAreCopiedAsSeparateItems() async throws {
+        let one = try await env.store.insert(Make.image(seed: 1))
+        let two = try await env.store.insert(Make.image(seed: 2))
+        let outcome = await makePaster(trusted: false).perform(.paste, items: [one, two], targetBundleID: nil)
+        XCTAssertEqual(outcome, .copied(.accessibilityMissing))
         XCTAssertEqual(keystrokes.pastes, 0)
+        XCTAssertEqual(pasteboard.pasteboardItems?.count, 2)
+    }
+
+    func testCopyingTextAroundAnImagePutsAllTheTextFirst() async throws {
+        let first = try await env.store.insert(Make.text("one"))
+        let image = try await env.store.insert(Make.image())
+        let last = try await env.store.insert(Make.text("three"))
+        let outcome = await makePaster().perform(.copy, items: [first, image, last], targetBundleID: nil)
+        XCTAssertEqual(outcome, .copied(.requested))
+        let items = try XCTUnwrap(pasteboard.pasteboardItems)
+        XCTAssertEqual(items.count, 2)
+        XCTAssertEqual(items[0].string(forType: .string), "one\nthree", "apps that read one item still get every line")
+        XCTAssertNotNil(items[1].data(forType: NSPasteboard.PasteboardType("public.png")))
+    }
+
+    func testPastingSeveralCardsKeepsTheirOrderInHistory() async throws {
+        let start = Date(timeIntervalSinceNow: -100)
+        let oldest = try await env.store.insert(Make.text("c", at: start))
+        let middle = try await env.store.insert(Make.text("b", at: start.addingTimeInterval(1)))
+        let newest = try await env.store.insert(Make.text("a", at: start.addingTimeInterval(2)))
+        _ = try await env.store.insert(Make.text("unrelated", at: start.addingTimeInterval(3)))
+        _ = await makePaster().perform(.paste, items: [newest, middle, oldest], targetBundleID: nil)
+        let history = try await env.store.history()
+        XCTAssertEqual(history.prefix(3).map(\.preview), ["a", "b", "c"])
+    }
+
+    func testCopyingTextAndAnImageKeepsTheTransform() async throws {
+        let rich = try await storeRichItem()
+        let image = try await env.store.insert(Make.image())
+        let outcome = await makePaster(trusted: false).perform(.transformed(.uppercase), items: [rich, image], targetBundleID: nil)
+        XCTAssertEqual(outcome, .copied(.accessibilityMissing))
+        XCTAssertEqual(keystrokes.pastes, 0)
+        let items = try XCTUnwrap(pasteboard.pasteboardItems)
+        XCTAssertEqual(items.count, 2)
+        XCTAssertEqual(items[0].string(forType: .string), "BOLD")
+        XCTAssertNil(items[0].data(forType: .rtf), "the text goes as transformed plain text, not its stored rich text")
+        XCTAssertNotNil(items[1].data(forType: NSPasteboard.PasteboardType("public.png")))
     }
 
     func testTransformedPasteWritesChangedPlainText() async throws {

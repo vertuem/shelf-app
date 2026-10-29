@@ -49,7 +49,8 @@ public final class PasteStackPanelController {
         let hosting = NSHostingView(rootView: view)
         hosting.sizingOptions = []
         panel.contentView = hosting
-        panel.level = .floating
+        // Above the shelf, which covers the right edge where the stack opens.
+        panel.level = NSWindow.Level(rawValue: ShelfPanel.level.rawValue + 1)
         panel.setAccessibilityLabel(String(localized: "Paste Stack"))
         self.preferences = preferences
         closeAction = { [weak self] in self?.onClose() }
@@ -58,8 +59,10 @@ public final class PasteStackPanelController {
     private let preferences: Preferences
 
     public var isVisible: Bool { panel.isVisible }
+    private var isShown = false
 
     public func show() {
+        isShown = true
         let mouse = NSEvent.mouseLocation
         let screen = NSScreen.screens.first { NSMouseInRect(mouse, $0.frame, false) } ?? NSScreen.main
         if let visible = screen?.visibleFrame {
@@ -111,13 +114,18 @@ public final class PasteStackPanelController {
     }
 
     public func hide() {
+        isShown = false
         if let keyMonitor { NSEvent.removeMonitor(keyMonitor) }
         keyMonitor = nil
         NSAnimationContext.runAnimationGroup { context in
             context.duration = 0.12
             panel.animator().alphaValue = 0
-        } completionHandler: { [panel] in
-            MainActor.assumeIsolated { panel.orderOut(nil) }
+        } completionHandler: { [weak self] in
+            MainActor.assumeIsolated {
+                // Reopened during the fade: leave it on screen.
+                guard let self, !self.isShown else { return }
+                self.panel.orderOut(nil)
+            }
         }
     }
 }

@@ -141,6 +141,7 @@ extension AppServices: SettingsBackend {
     }
 
     var isDevelopmentBuild: Bool { updater.isDevelopmentBuild }
+    var updatesInstallByHand: Bool { updater.mode == .notify }
     var updateStatus: String { updater.statusText }
 
     var isCheckingForUpdates: Bool {
@@ -151,10 +152,6 @@ extension AppServices: SettingsBackend {
     }
 
     func checkForUpdates() {
-        if updater.isUnsignedRelease {
-            NSWorkspace.shared.open(Brand.repositoryURL.appendingPathComponent("releases"))
-            return
-        }
         Task {
             await updater.check(userInitiated: true)
             if case .available(let release) = updater.state {
@@ -201,9 +198,9 @@ extension AppServices: OnboardingBackend {
     func finishOnboarding(accessibilitySkipped: Bool) {
         let firstTime = !preferences.defaults.bool(forKey: PrefKey.onboardingCompleted)
         preferences.defaults.set(true, forKey: PrefKey.onboardingCompleted)
-        if accessibilitySkipped, firstTime {
-            preferences.pasteMode = .toClipboard
-        }
+        // Paste mode stays "to active app" when Accessibility is skipped: the
+        // paster copies without it and says why, and pastes once it is granted.
+        // Switching to the clipboard here outlived the grant.
         onboardingWindow.close()
         if firstTime {
             registerLoginItemOnce()
@@ -224,6 +221,7 @@ extension AppServices: OnboardingBackend {
 
 extension AppServices: MenuBarBackend {
     func openShelf() {
+        shelf.reconcile()
         if !shelf.isVisible { toggleShelf() }
     }
 

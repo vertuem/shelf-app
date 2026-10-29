@@ -6,6 +6,32 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-10-29
+
+**Coming from 0.1.0?** 0.1.0 cannot check for updates, so install this version by hand once: open the DMG and drag Shelf to Applications, replacing the old one. From 0.1.1 on, Shelf tells you when a new version is out.
+
+### Added
+- Update notices for releases that Apple did not sign: Shelf checks GitHub when it starts (also at login) and every six hours, shows the release notes, and Download fetches the new version to drag to Applications.
+- After such an update, Shelf clears its old Accessibility entry, which macOS keeps but no longer accepts, and asks again, so one click turns pasting back on.
+
+### Changed
+- New versions are offered as soon as they are released; the three-day wait is off by default (Settings, About).
+- When Return copies a card instead of pasting it, the message says why: Shelf needs Accessibility, or the app is on the paste-manually list.
+- Several selected cards with images among them paste one after another, in order, instead of leaving the images out (or failing when every card was an image).
+
+### Fixed
+- Skipping Accessibility in the welcome tour no longer switches paste mode to the clipboard for good; once Accessibility is granted, Return pastes.
+- Escape closes the shelf even when it does not have the keyboard, for example over a full-screen app, instead of reaching the app underneath and leaving full screen.
+- ⇧⌘V no longer needs two presses after the system hid the shelf (Hide Others), which looked like the shelf not opening.
+- The shelf no longer stops opening after the system took its window off screen (a full-screen Space closing, a close animation that never finished): it counted as open, so ⇧⌘V and `shelf-app://open` did nothing until Shelf was restarted.
+- Search: a word typed after a filter chip no longer joins the word before it.
+- Copying several cards with an image among them puts all the text in the first clipboard item and keeps plain text and Paste as.
+- Pasting several cards keeps their order in the history.
+- Escape cancels the Delete Pinboard dialog and closes the Paste Stack when it has the keyboard, instead of closing the shelf.
+- Switching to another app closes the shelf; ⇧⌘V on an open shelf without the keyboard gives it the keyboard; Show in Finder and Open Link close the shelf first.
+- After the Keyboard Shortcuts window closes, the next paste goes to the app you were in, not to Shelf.
+- The Paste Stack no longer vanishes when reopened during its fade-out, and opens above a shelf on the right edge.
+
 ## [0.1.0] - 2026-10-17
 
 ### Added

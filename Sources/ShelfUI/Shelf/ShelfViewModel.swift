@@ -218,6 +218,7 @@ public final class ShelfViewModel {
     public func prepareForShow() {
         commitPendingRemoval()
         pinPickerItemID = nil
+        pinboardPendingDeletion = nil
         renamingPinboardID = nil
         renamingItemID = nil
         toast = nil
@@ -487,7 +488,9 @@ public final class ShelfViewModel {
             text.removeSubrange(filter.range)
         }
         filterChips = Array(NSOrderedSet(array: filterChips).compactMap { $0 as? String })
-        searchText = text.split(separator: " ", omittingEmptySubsequences: true).joined(separator: " ")
+        let rest = text.split(separator: " ", omittingEmptySubsequences: true).joined(separator: " ")
+        // The space the user just typed stays, so the next word does not join the last one.
+        searchText = rest.isEmpty ? "" : rest + " "
     }
 
     public func focusSearch() {
@@ -1018,9 +1021,12 @@ public final class ShelfViewModel {
         query = SearchQuery()
     }
 
-    /// Escape: closes Quick Look and menus, then clears the search, then closes the shelf.
+    /// Escape: cancels a confirmation, closes Quick Look and menus, then clears the search, then closes the shelf.
     public func escape() {
-        if hooks.isQuickLookVisible() {
+        if pinboardPendingDeletion != nil {
+            // The shelf holds Escape as a hot key, so the alert never sees it: Escape is its Cancel.
+            pinboardPendingDeletion = nil
+        } else if hooks.isQuickLookVisible() {
             hooks.quickLook(nil)
         } else if pinPickerItemID != nil {
             pinPickerItemID = nil

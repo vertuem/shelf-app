@@ -54,23 +54,30 @@ final class Updater {
         }
     }
 
-    /// A local development build: never updates, and says so.
-    var isDevelopmentBuild: Bool { bundleIdentifier.hasSuffix(".dev") }
+    /// How a copy of the app updates.
+    enum Mode: Equatable {
+        /// A local development build: never updates, and says so.
+        case off
+        /// A release Apple did not sign (no Developer ID): it cannot verify an
+        /// update the way `install` requires, so it checks, offers the new
+        /// version and downloads it; the user drags it to Applications.
+        case notify
+        /// A Developer ID release: verifies, installs and relaunches.
+        case install
+    }
 
-    /// A release that Apple did not sign (no Developer ID): it cannot verify an
-    /// update the way the updater requires, so new versions come from the
-    /// releases page instead.
-    var isUnsignedRelease: Bool { !isDevelopmentBuild && teamIdentifier == nil }
+    static func mode(bundleIdentifier: String, teamIdentifier: String?) -> Mode {
+        if bundleIdentifier.hasSuffix(".dev") { return .off }
+        return teamIdentifier == nil ? .notify : .install
+    }
 
-    /// Development and unsigned builds never update themselves.
+    var mode: Mode { Self.mode(bundleIdentifier: bundleIdentifier, teamIdentifier: teamIdentifier) }
+
+    var isDevelopmentBuild: Bool { mode == .off }
+
+    /// Development builds never update.
     var disabledReason: String? {
-        if isDevelopmentBuild {
-            return String(localized: "Development build: updates are off.")
-        }
-        if isUnsignedRelease {
-            return String(localized: "New versions are on the releases page.")
-        }
-        return nil
+        mode == .off ? String(localized: "Development build: updates are off.") : nil
     }
 
     var isDisabled: Bool { disabledReason != nil }
@@ -145,8 +152,18 @@ final class Updater {
         }
     }
 
+    /// For `.notify` copies: the disk image opens in the browser's downloads,
+    /// or the release page when there is no trusted image.
+    func download(_ release: Release) {
+        if let dmg = release.dmg, UpdatePolicy.isTrustedDownloadURL(dmg.browserDownloadURL) {
+            NSWorkspace.shared.open(dmg.browserDownloadURL)
+        } else {
+            NSWorkspace.shared.open(release.htmlURL)
+        }
+    }
+
     func install(_ release: Release) async {
-        guard let dmg = release.dmg else { return }
+        guard mode == .install, let dmg = release.dmg else { return }
         state = .downloading(release)
         do {
             guard UpdatePolicy.isTrustedDownloadURL(dmg.browserDownloadURL) else { throw UpdateError.untrustedURL }

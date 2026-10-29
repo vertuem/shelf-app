@@ -6,7 +6,7 @@ struct AboutPane: View {
     let backend: any SettingsBackend
     @AppStorage(PrefKey.checkForUpdates) private var checkAutomatically = true
     @AppStorage(PrefKey.includeBetas) private var includeBetas = false
-    @AppStorage(PrefKey.stabilityBuffer) private var stabilityBuffer = true
+    @AppStorage(PrefKey.stabilityBuffer) private var stabilityBuffer = false
 
     var body: some View {
         SettingsForm {
@@ -57,7 +57,11 @@ struct AboutPane: View {
             } header: {
                 SectionHeader(String(localized: "Updates"))
             } footer: {
-                Footnote(String(localized: "Updates come from GitHub Releases. Each download is checked for the developer's signature and Apple's notarization before it replaces the app, and the previous version is kept until the new one starts."))
+                if backend.updatesInstallByHand {
+                    Footnote(String(localized: "Updates come from GitHub Releases. This copy is not signed by Apple, so \(Brand.name) tells you when a new version is out and downloads it; you drag it to Applications."))
+                } else {
+                    Footnote(String(localized: "Updates come from GitHub Releases. Each download is checked for the developer's signature and Apple's notarization before it replaces the app, and the previous version is kept until the new one starts."))
+                }
             }
 
             SettingsSection(String(localized: "Help")) {

@@ -254,11 +254,15 @@ struct CardMenu: View {
         Button(String(localized: "Quick Look"), systemImage: "eye") { model.quickLook(item) }
         if item.kind == .file, !item.filePaths.isEmpty, !item.missingFiles {
             Button(String(localized: "Show in Finder"), systemImage: "folder") {
+                model.hooks.close()
                 NSWorkspace.shared.activateFileViewerSelecting(item.filePaths.map { URL(fileURLWithPath: $0) })
             }
         }
         if item.kind == .link, let url = item.url.flatMap(URL.init(string:)) {
-            Button(String(localized: "Open Link"), systemImage: "safari") { NSWorkspace.shared.open(url) }
+            Button(String(localized: "Open Link"), systemImage: "safari") {
+                model.hooks.close()
+                NSWorkspace.shared.open(url)
+            }
         }
         Divider()
         if case .pinboard = model.tab {

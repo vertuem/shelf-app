@@ -61,10 +61,10 @@ public struct CheatSheetView: View {
 
 /// A plain window hosting the cheat sheet.
 @MainActor
-public final class CheatSheetWindowController {
+public final class CheatSheetWindowController: NSObject, NSWindowDelegate {
     private var window: NSWindow?
 
-    public init() {}
+    override public init() {}
 
     public func show() {
         if window == nil {
@@ -74,9 +74,17 @@ public final class CheatSheetWindowController {
             window.titlebarAppearsTransparent = true
             window.isReleasedWhenClosed = false
             window.center()
+            window.delegate = self
             self.window = window
         }
         NSApp.activate()
         window?.makeKeyAndOrderFront(nil)
+    }
+
+    public nonisolated func windowWillClose(_ notification: Notification) {
+        MainActor.assumeIsolated {
+            // Otherwise Shelf stays frontmost and the next paste has no app to go to.
+            NSApp.hide(nil)
+        }
     }
 }

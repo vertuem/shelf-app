@@ -61,6 +61,12 @@ struct UpdateView: View {
             }
             .frame(height: 220)
             .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
+            if updater.mode == .notify {
+                Text(String(localized: "This copy of \(Brand.name) is not signed by Apple, so it cannot replace itself. Download opens the disk image: drag \(Brand.name) to Applications and replace the old one. On its first start, macOS asks once more for Accessibility and for the history key in your keychain; choose Always Allow."))
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
             HStack {
                 Text(updater.statusText).font(.callout).foregroundStyle(.secondary)
                 Spacer()
@@ -77,8 +83,16 @@ struct UpdateView: View {
                     }
                     Button(String(localized: "Later"), action: close)
                         .keyboardShortcut(.cancelAction)
-                    Button(String(localized: "Install Update")) { Task { await updater.install(release) } }
+                    if updater.mode == .notify {
+                        Button(String(localized: "Download")) {
+                            updater.download(release)
+                            close()
+                        }
                         .keyboardShortcut(.defaultAction)
+                    } else {
+                        Button(String(localized: "Install Update")) { Task { await updater.install(release) } }
+                            .keyboardShortcut(.defaultAction)
+                    }
                 }
             }
         }

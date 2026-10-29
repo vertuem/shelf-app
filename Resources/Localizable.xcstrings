@@ -4275,6 +4275,74 @@
         }
       }
     },
+    "Copied. %@ needs Accessibility to paste for you.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert. %@ braucht Bedienungshilfen, um für dich einzusetzen."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiado. %@ necesita Accesibilidad para pegar por ti."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copié. %@ a besoin de l'accessibilité pour coller à votre place."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーしました。%@ がペーストするにはアクセシビリティが必要です。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gekopieerd. %@ heeft Toegankelijkheid nodig om voor je te plakken."
+          }
+        }
+      }
+    },
+    "Copied. Press ⌘V to paste in %@.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kopiert. Zum Einfügen in %@ ⌘V drücken."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copiado. Pulsa ⌘V para pegar en %@."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copié. Appuyez sur ⌘V pour coller dans %@."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "コピーしました。⌘Vを押して%@にペーストします。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Gekopieerd. Druk op ⌘V om in %@ te plakken."
+          }
+        }
+      }
+    },
     "Copied. Press ⌘V to paste.": {
       "localizations": {
         "de": {
@@ -5227,6 +5295,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dubbelklik"
+          }
+        }
+      }
+    },
+    "Download": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Laden"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Descargar"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Télécharger"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロード"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Downloaden"
           }
         }
       }
@@ -13705,6 +13807,40 @@
         }
       }
     },
+    "This copy of %@ is not signed by Apple, so it cannot replace itself. Download opens the disk image: drag %@ to Applications and replace the old one. On its first start, macOS asks once more for Accessibility and for the history key in your keychain; choose Always Allow.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diese Kopie von %1$@ ist nicht von Apple signiert und kann sich daher nicht selbst ersetzen. „Laden“ öffnet das Image: Ziehe %2$@ in „Programme“ und ersetze die alte Version. Beim ersten Start fragt macOS noch einmal nach Bedienungshilfen und nach dem Verlaufsschlüssel im Schlüsselbund; wähle „Immer erlauben“."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Esta copia de %1$@ no está firmada por Apple, así que no puede reemplazarse sola. Descargar abre la imagen de disco: arrastra %2$@ a Aplicaciones y reemplaza la versión anterior. Al abrirla por primera vez, macOS vuelve a pedir Accesibilidad y la clave del historial en tu llavero; elige Permitir siempre."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cette copie de %1$@ n'est pas signée par Apple et ne peut donc pas se remplacer elle-même. Télécharger ouvre l'image disque : glissez %2$@ dans Applications et remplacez l'ancienne version. Au premier lancement, macOS redemande l'accessibilité et la clé de l'historique dans votre trousseau ; choisissez Toujours autoriser."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "この%1$@はAppleの署名がないため、自動では置き換えられません。「ダウンロード」でディスクイメージが開きます。%2$@を「アプリケーション」にドラッグして古いものと置き換えてください。初回起動時、macOSがアクセシビリティとキーチェーン内の履歴キーへのアクセスをもう一度確認します。「常に許可」を選んでください。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deze kopie van %1$@ is niet door Apple ondertekend en kan zichzelf dus niet vervangen. Downloaden opent de schijfkopie: sleep %2$@ naar Programma's en vervang de oude versie. Bij de eerste start vraagt macOS nog één keer om Toegankelijkheid en om de geschiedenissleutel in je sleutelhanger; kies Altijd toestaan."
+          }
+        }
+      }
+    },
     "This file is not a %@ export": {
       "localizations": {
         "de": {
@@ -14279,6 +14415,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Updates komen van GitHub Releases. Elke download wordt gecontroleerd op de handtekening van de ontwikkelaar en de notarisatie door Apple voordat de app wordt vervangen, en de vorige versie blijft bewaard tot de nieuwe is gestart."
+          }
+        }
+      }
+    },
+    "Updates come from GitHub Releases. This copy is not signed by Apple, so %@ tells you when a new version is out and downloads it; you drag it to Applications.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates kommen von GitHub Releases. Diese Kopie ist nicht von Apple signiert: %@ sagt dir, wenn eine neue Version da ist, und lädt sie; du ziehst sie in „Programme“."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Las actualizaciones vienen de GitHub Releases. Esta copia no está firmada por Apple, así que %@ te avisa cuando hay una versión nueva y la descarga; tú la arrastras a Aplicaciones."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Les mises à jour viennent de GitHub Releases. Cette copie n'est pas signée par Apple : %@ vous prévient quand une nouvelle version sort et la télécharge ; vous la glissez dans Applications."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "アップデートはGitHub Releasesから届きます。このコピーはAppleの署名がないため、%@は新しいバージョンが出たことを知らせてダウンロードします。「アプリケーション」へのドラッグはご自身で行います。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Updates komen van GitHub Releases. Deze kopie is niet door Apple ondertekend: %@ laat weten wanneer er een nieuwe versie is en downloadt die; jij sleept hem naar Programma's."
           }
         }
       }

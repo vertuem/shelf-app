@@ -50,6 +50,8 @@ public enum PrefKey {
     public static let loginItemRegistered = "loginItemRegistered"
     public static let lastRetentionRun = "lastRetentionRun"
     public static let previousBundlePath = "previousBundlePath"
+    /// The build that last had Accessibility, to spot an update that lost it.
+    public static let accessibilityGrantedBuild = "accessibilityGrantedBuild"
     public static let launchesSinceUpdate = "launchesSinceUpdate"
 }
 
@@ -193,7 +195,7 @@ public struct Preferences: @unchecked Sendable {
         PrefKey.plainTextModifier: PlainTextModifier.shift.rawValue,
         PrefKey.checkForUpdates: true,
         PrefKey.includeBetas: false,
-        PrefKey.stabilityBuffer: true,
+        PrefKey.stabilityBuffer: false,
         PrefKey.onboardingCompleted: false,
     ] }
 
