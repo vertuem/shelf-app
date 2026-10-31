@@ -49,7 +49,8 @@ public final class ShelfPanel: NSPanel {
 /// Shows, hides and positions the shelf and turns key presses into actions.
 @MainActor
 public final class ShelfPanelController {
-    public let panel = ShelfPanel()
+    /// Replaced when the window server loses it; see `verifyOnScreen`.
+    public private(set) var panel: ShelfPanel
     public let model: ShelfViewModel
     private let presentation = ShelfPresentation()
     private let preferences: Preferences
@@ -76,11 +77,25 @@ public final class ShelfPanelController {
     public init(model: ShelfViewModel, preferences: Preferences) {
         self.model = model
         self.preferences = preferences
+        panel = Self.makePanel(model: model, presentation: presentation)
+        observeSystem()
+    }
+
+    private static func makePanel(model: ShelfViewModel, presentation: ShelfPresentation) -> ShelfPanel {
+        let panel = ShelfPanel()
         let hosting = NSHostingView(rootView: ShelfView(model: model, presentation: presentation))
         hosting.sizingOptions = []
         panel.contentView = hosting
         panel.setAccessibilityLabel(String(localized: "Clipboard history"))
-        observeSystem()
+        return panel
+    }
+
+    /// What the window server says, not AppKit: the two can disagree.
+    private var isOnScreen: Bool {
+        guard panel.windowNumber > 0,
+              let info = CGWindowListCopyWindowInfo(.optionIncludingWindow, CGWindowID(panel.windowNumber)) as? [[String: Any]]
+        else { return false }
+        return info.first?[kCGWindowIsOnscreen as String] as? Bool ?? false
     }
 
     public func toggle() {
@@ -102,13 +117,17 @@ public final class ShelfPanelController {
     /// it visible while the window server has it on no Space. Without this the
     /// shelf counted as open, so ⇧⌘V and `shelf-app://open` did nothing.
     public func reconcile() {
-        guard isVisible, !(panel.isVisible && panel.isOnActiveSpace) else { return }
+        guard isVisible, !(panel.isVisible && panel.isOnActiveSpace && isOnScreen) else { return }
         Log.ui.notice("The shelf was off screen while marked open")
         hide(animated: false)
     }
 
     /// `takeFocus: false` shows the shelf without taking the keyboard, for review captures.
     public func show(takeFocus: Bool = true) {
+        present(takeFocus: takeFocus, isRetry: false)
+    }
+
+    private func present(takeFocus: Bool, isRetry: Bool) {
         reconcile()
         guard !isVisible else { return }
         isVisible = true
@@ -145,6 +164,29 @@ public final class ShelfPanelController {
         if takeFocus {
             claimEscape()
             ensureKey()
+        }
+        verifyOnScreen(takeFocus: takeFocus, isRetry: isRetry)
+    }
+
+    /// The window server can lose a window for good: AppKit calls it ordered
+    /// in and on the active Space, the server has it on no Space, and ordering
+    /// it out and in again does not bring it back (seen over full-screen apps
+    /// after days of uptime). A fresh window works, so the shelf gets one.
+    private func verifyOnScreen(takeFocus: Bool, isRetry: Bool) {
+        Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(100))
+            guard let self, self.isVisible, !self.isOnScreen else { return }
+            guard !isRetry else {
+                Log.ui.error("The shelf window did not reach the screen, also after a rebuild")
+                return
+            }
+            Log.ui.notice("The shelf window did not reach the screen; rebuilding it")
+            self.hide(animated: false)
+            let old = self.panel
+            self.panel = Self.makePanel(model: self.model, presentation: self.presentation)
+            old.contentView = nil
+            old.close()
+            self.present(takeFocus: takeFocus, isRetry: true)
         }
     }
 
