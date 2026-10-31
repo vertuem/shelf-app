@@ -26,8 +26,8 @@ public protocol SettingsBackend: AnyObject {
 
     var versionString: String { get }
     var isDevelopmentBuild: Bool { get }
-    /// Not signed by Apple: the updater offers new versions but cannot install them.
-    var updatesInstallByHand: Bool { get }
+    /// Not signed by Apple: updates are checked against the release's checksum, not a Developer ID.
+    var updatesAreUnsigned: Bool { get }
     var updateStatus: String { get }
     var isCheckingForUpdates: Bool { get }
     func checkForUpdates()

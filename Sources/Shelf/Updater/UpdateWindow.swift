@@ -41,7 +41,6 @@ struct UpdateView: View {
     let release: Release
     let paths: AppPaths
     let close: () -> Void
-    @State private var downloaded = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -62,8 +61,8 @@ struct UpdateView: View {
             }
             .frame(height: 220)
             .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 8))
-            if updater.mode == .notify {
-                Text(String(localized: "This copy of \(Brand.name) is not signed by Apple, so it cannot replace itself. Download fetches the disk image; then quit \(Brand.name) (an app that is open cannot be replaced), drag the new one to Applications and open it. macOS asks once more for Accessibility and for the history key in your keychain; choose Always Allow."))
+            if updater.mode == .unsigned {
+                Text(String(localized: "This copy of \(Brand.name) is not signed by Apple. The update is checked against the checksum published with the release before it replaces the app. After the relaunch, macOS asks once more for Accessibility and for the history key in your keychain; choose Always Allow."))
                     .font(.callout)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -84,20 +83,8 @@ struct UpdateView: View {
                     }
                     Button(String(localized: "Later"), action: close)
                         .keyboardShortcut(.cancelAction)
-                    if updater.mode == .notify, downloaded {
-                        // The next step: Finder refuses to replace an app that is still open.
-                        Button(String(localized: "Quit \(Brand.name)")) { NSApp.terminate(nil) }
-                            .keyboardShortcut(.defaultAction)
-                    } else if updater.mode == .notify {
-                        Button(String(localized: "Download")) {
-                            updater.download(release)
-                            downloaded = true
-                        }
+                    Button(String(localized: "Install Update")) { Task { await updater.install(release) } }
                         .keyboardShortcut(.defaultAction)
-                    } else {
-                        Button(String(localized: "Install Update")) { Task { await updater.install(release) } }
-                            .keyboardShortcut(.defaultAction)
-                    }
                 }
             }
         }

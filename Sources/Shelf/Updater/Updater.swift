@@ -54,21 +54,22 @@ final class Updater {
         }
     }
 
-    /// How a copy of the app updates.
+    /// How a copy of the app checks an update before it replaces itself.
     enum Mode: Equatable {
         /// A local development build: never updates, and says so.
         case off
-        /// A release Apple did not sign (no Developer ID): it cannot verify an
-        /// update the way `install` requires, so it checks, offers the new
-        /// version and downloads it; the user drags it to Applications.
-        case notify
-        /// A Developer ID release: verifies, installs and relaunches.
-        case install
+        /// A release Apple did not sign (no Developer ID): the download must
+        /// match the SHA-256 published with the release, and the app inside
+        /// must have an intact code signature, this bundle id and a newer
+        /// version. The same trust as downloading the DMG by hand.
+        case unsigned
+        /// A Developer ID release: also the Team ID and Apple's notarization.
+        case signed
     }
 
     static func mode(bundleIdentifier: String, teamIdentifier: String?) -> Mode {
         if bundleIdentifier.hasSuffix(".dev") { return .off }
-        return teamIdentifier == nil ? .notify : .install
+        return teamIdentifier == nil ? .unsigned : .signed
     }
 
     var mode: Mode { Self.mode(bundleIdentifier: bundleIdentifier, teamIdentifier: teamIdentifier) }
@@ -152,18 +153,8 @@ final class Updater {
         }
     }
 
-    /// For `.notify` copies: the disk image opens in the browser's downloads,
-    /// or the release page when there is no trusted image.
-    func download(_ release: Release) {
-        if let dmg = release.dmg, UpdatePolicy.isTrustedDownloadURL(dmg.browserDownloadURL) {
-            NSWorkspace.shared.open(dmg.browserDownloadURL)
-        } else {
-            NSWorkspace.shared.open(release.htmlURL)
-        }
-    }
-
     func install(_ release: Release) async {
-        guard mode == .install, let dmg = release.dmg else { return }
+        guard mode != .off, let dmg = release.dmg else { return }
         state = .downloading(release)
         do {
             guard UpdatePolicy.isTrustedDownloadURL(dmg.browserDownloadURL) else { throw UpdateError.untrustedURL }
@@ -201,19 +192,25 @@ final class Updater {
         guard actual == expected else { throw UpdateError.checksumMismatch }
     }
 
-    /// Verifies the DMG and the app inside it, then copies the app next to the running one.
+    /// Verifies the DMG and the app inside it, then copies the app next to the
+    /// running one (or into `stagingDirectory`, for tests). A nil Team ID is an
+    /// unsigned copy: the checksum already matched, so the app's own signature
+    /// must be intact and its bundle id ours; Developer ID and notarization are
+    /// checked only when this copy has a Team ID.
     nonisolated static func verifyAndStage(
         dmgURL: URL,
         bundleIdentifier: String,
         teamIdentifier: String?,
-        currentVersion: SemanticVersion
+        currentVersion: SemanticVersion,
+        stagingDirectory: URL? = nil
     ) throws -> URL {
-        guard let teamIdentifier else { throw UpdateError.signature("no team") }
-        guard try Shell.run("/usr/bin/codesign", ["--verify", "--deep", "--strict", dmgURL.path]).status == 0 else {
-            throw UpdateError.signature("codesign dmg")
-        }
-        guard try Shell.run("/usr/sbin/spctl", ["--assess", "--type", "open", "--context", "context:primary-signature", dmgURL.path]).status == 0 else {
-            throw UpdateError.signature("spctl dmg")
+        if teamIdentifier != nil {
+            guard try Shell.run("/usr/bin/codesign", ["--verify", "--deep", "--strict", dmgURL.path]).status == 0 else {
+                throw UpdateError.signature("codesign dmg")
+            }
+            guard try Shell.run("/usr/sbin/spctl", ["--assess", "--type", "open", "--context", "context:primary-signature", dmgURL.path]).status == 0 else {
+                throw UpdateError.signature("spctl dmg")
+            }
         }
 
         let attach = try Shell.run("/usr/bin/hdiutil", ["attach", "-nobrowse", "-readonly", "-noautoopen", "-plist", dmgURL.path])
@@ -227,18 +224,25 @@ final class Updater {
         guard let appName = contents.first(where: { $0.hasSuffix(".app") }) else { throw UpdateError.noApp }
         let mountedApp = URL(fileURLWithPath: mountPoint).appendingPathComponent(appName)
 
+        // Read from disk: `Bundle(url:)` caches by path, and every image of the
+        // same name mounts at the same path, so it could answer for an earlier one.
+        let info = (try? Data(contentsOf: mountedApp.appendingPathComponent("Contents/Info.plist")))
+            .flatMap { try? PropertyListSerialization.propertyList(from: $0, format: nil) as? [String: Any] } ?? [:]
         guard try Shell.run("/usr/bin/codesign", ["--verify", "--deep", "--strict", mountedApp.path]).status == 0,
-              try Shell.run("/usr/sbin/spctl", ["--assess", "--type", "execute", mountedApp.path]).status == 0,
-              CodeSignature.validate(bundleAt: mountedApp, teamIdentifier: teamIdentifier, bundleIdentifier: bundleIdentifier)
+              info["CFBundleIdentifier"] as? String == bundleIdentifier
         else { throw UpdateError.signature("app") }
+        if let teamIdentifier {
+            guard try Shell.run("/usr/sbin/spctl", ["--assess", "--type", "execute", mountedApp.path]).status == 0,
+                  CodeSignature.validate(bundleAt: mountedApp, teamIdentifier: teamIdentifier, bundleIdentifier: bundleIdentifier)
+            else { throw UpdateError.signature("app") }
+        }
 
-        let newVersion = (Bundle(url: mountedApp)?.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String)
-            .flatMap(SemanticVersion.init)
+        let newVersion = (info["CFBundleShortVersionString"] as? String).flatMap(SemanticVersion.init)
         guard let newVersion, newVersion > currentVersion else { throw UpdateError.notNewer }
 
-        let currentApp = Bundle.main.bundleURL
-        let staged = currentApp.deletingLastPathComponent().appendingPathComponent(".\(Brand.name)-\(newVersion).app")
-        guard FileManager.default.isWritableFile(atPath: currentApp.deletingLastPathComponent().path) else { throw UpdateError.notWritable }
+        let folder = stagingDirectory ?? Bundle.main.bundleURL.deletingLastPathComponent()
+        let staged = folder.appendingPathComponent(".\(Brand.name)-\(newVersion).app")
+        guard FileManager.default.isWritableFile(atPath: folder.path) else { throw UpdateError.notWritable }
         try? FileManager.default.removeItem(at: staged)
         guard try Shell.run("/usr/bin/ditto", [mountedApp.path, staged.path]).status == 0 else { throw UpdateError.notWritable }
         return staged
@@ -310,7 +314,12 @@ final class Updater {
         case .upToDate: String(localized: "\(Brand.name) is up to date.")
         case .available(let release): String(localized: "Version \(release.version?.description ?? release.tagName) is available.")
         case .downloading: String(localized: "Downloading…")
-        case .verifying: String(localized: "Verifying signature and notarization…")
+        case .verifying:
+            if mode == .signed {
+                String(localized: "Verifying signature and notarization…")
+            } else {
+                String(localized: "Verifying the download…")
+            }
         case .ready: String(localized: "Ready. Relaunch to finish.")
         case .failed(let message): message
         }
