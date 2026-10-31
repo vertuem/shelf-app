@@ -9,6 +9,9 @@ All notable changes are listed here. The format follows
 ### Added
 - Settings, General has a Quit button: with no Dock or menu bar icon there was no visible way to quit.
 
+### Fixed
+- The update window said to drag the new version to Applications without saying to quit Shelf first, and Finder refused ("Shelf.app is in use"). After Download it now offers Quit Shelf and says why.
+
 ## [0.1.2] - 2026-10-31
 
 ### Fixed

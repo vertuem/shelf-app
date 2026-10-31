@@ -13841,36 +13841,36 @@
         }
       }
     },
-    "This copy of %@ is not signed by Apple, so it cannot replace itself. Download opens the disk image: drag %@ to Applications and replace the old one. On its first start, macOS asks once more for Accessibility and for the history key in your keychain; choose Always Allow.": {
+    "This copy of %@ is not signed by Apple, so it cannot replace itself. Download fetches the disk image; then quit %@ (an app that is open cannot be replaced), drag the new one to Applications and open it. macOS asks once more for Accessibility and for the history key in your keychain; choose Always Allow.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Kopie von %1$@ ist nicht von Apple signiert und kann sich daher nicht selbst ersetzen. „Laden“ öffnet das Image: Ziehe %2$@ in „Programme“ und ersetze die alte Version. Beim ersten Start fragt macOS noch einmal nach Bedienungshilfen und nach dem Verlaufsschlüssel im Schlüsselbund; wähle „Immer erlauben“."
+            "value": "Diese Kopie von %1$@ ist nicht von Apple signiert und kann sich daher nicht selbst ersetzen. „Laden“ holt das Image; beende dann %2$@ (eine geöffnete App lässt sich nicht ersetzen), ziehe die neue Version in „Programme“ und öffne sie. macOS fragt noch einmal nach Bedienungshilfen und nach dem Verlaufsschlüssel im Schlüsselbund; wähle „Immer erlauben“."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta copia de %1$@ no está firmada por Apple, así que no puede reemplazarse sola. Descargar abre la imagen de disco: arrastra %2$@ a Aplicaciones y reemplaza la versión anterior. Al abrirla por primera vez, macOS vuelve a pedir Accesibilidad y la clave del historial en tu llavero; elige Permitir siempre."
+            "value": "Esta copia de %1$@ no está firmada por Apple, así que no puede reemplazarse sola. Descargar obtiene la imagen de disco; después cierra %2$@ (una app abierta no se puede reemplazar), arrastra la nueva a Aplicaciones y ábrela. macOS vuelve a pedir Accesibilidad y la clave del historial en tu llavero; elige Permitir siempre."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette copie de %1$@ n'est pas signée par Apple et ne peut donc pas se remplacer elle-même. Télécharger ouvre l'image disque : glissez %2$@ dans Applications et remplacez l'ancienne version. Au premier lancement, macOS redemande l'accessibilité et la clé de l'historique dans votre trousseau ; choisissez Toujours autoriser."
+            "value": "Cette copie de %1$@ n'est pas signée par Apple et ne peut donc pas se remplacer elle-même. Télécharger récupère l'image disque ; quittez ensuite %2$@ (une app ouverte ne peut pas être remplacée), glissez la nouvelle dans Applications et ouvrez-la. macOS redemande l'accessibilité et la clé de l'historique dans votre trousseau ; choisissez Toujours autoriser."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この%1$@はAppleの署名がないため、自動では置き換えられません。「ダウンロード」でディスクイメージが開きます。%2$@を「アプリケーション」にドラッグして古いものと置き換えてください。初回起動時、macOSがアクセシビリティとキーチェーン内の履歴キーへのアクセスをもう一度確認します。「常に許可」を選んでください。"
+            "value": "この%1$@はAppleの署名がないため、自動では置き換えられません。「ダウンロード」でディスクイメージを取得したら、%2$@を終了し（開いているアプリは置き換えられません）、新しいものを「アプリケーション」にドラッグして開いてください。macOSがアクセシビリティとキーチェーン内の履歴キーへのアクセスをもう一度確認します。「常に許可」を選んでください。"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deze kopie van %1$@ is niet door Apple ondertekend en kan zichzelf dus niet vervangen. Downloaden opent de schijfkopie: sleep %2$@ naar Programma's en vervang de oude versie. Bij de eerste start vraagt macOS nog één keer om Toegankelijkheid en om de geschiedenissleutel in je sleutelhanger; kies Altijd toestaan."
+            "value": "Deze kopie van %1$@ is niet door Apple ondertekend en kan zichzelf dus niet vervangen. Downloaden haalt de schijfkopie op; stop daarna %2$@ (een geopende app kan niet worden vervangen), sleep de nieuwe naar Programma's en open hem. macOS vraagt nog één keer om Toegankelijkheid en om de geschiedenissleutel in je sleutelhanger; kies Altijd toestaan."
           }
         }
       }
