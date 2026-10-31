@@ -6,6 +6,11 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-31
+
+### Fixed
+- The shelf stopped opening, mostly over full-screen apps, until Shelf was restarted: macOS had lost the shelf's window (on no Space, while still reported as shown) and showing it again did not bring it back. Shelf now checks with the window server that the shelf really reached the screen, and if not, replaces the window and opens it again.
+
 ## [0.1.1] - 2026-10-29
 
 **Coming from 0.1.0?** 0.1.0 cannot check for updates, so install this version by hand once: open the DMG and drag Shelf to Applications, replacing the old one. From 0.1.1 on, Shelf tells you when a new version is out.
