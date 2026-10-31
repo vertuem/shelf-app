@@ -8545,6 +8545,40 @@
         }
       }
     },
+    "Open %@ from Spotlight to start it again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffne %@ über Spotlight, um es wieder zu starten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre %@ desde Spotlight para volver a iniciarlo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrez %@ depuis Spotlight pour le relancer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう一度起動するには、Spotlightから%@を開きます。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open %@ via Spotlight om het weer te starten."
+          }
+        }
+      }
+    },
     "Open Link": {
       "localizations": {
         "de": {

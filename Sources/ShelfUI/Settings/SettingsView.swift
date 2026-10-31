@@ -33,6 +33,7 @@ public protocol SettingsBackend: AnyObject {
     func checkForUpdates()
     func rerunOnboarding()
     func reportCrash()
+    func quit()
 }
 
 /// The Settings window: General, Privacy, Shortcuts, About.

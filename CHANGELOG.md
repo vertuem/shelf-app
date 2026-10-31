@@ -6,6 +6,9 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+### Added
+- Settings, General has a Quit button: with no Dock or menu bar icon there was no visible way to quit.
+
 ## [0.1.2] - 2026-10-31
 
 ### Fixed
