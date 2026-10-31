@@ -87,9 +87,9 @@ final class UpdaterTests: XCTestCase {
     func testUpdateModeFollowsTheSignature() {
         XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf.dev", teamIdentifier: "ABCDE12345"), .off)
         XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf.dev", teamIdentifier: nil), .off)
-        XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf", teamIdentifier: nil), .notify,
-                       "an unsigned release still checks and offers new versions")
-        XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf", teamIdentifier: "ABCDE12345"), .install)
+        XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf", teamIdentifier: nil), .unsigned,
+                       "an unsigned release still updates, checked by checksum and its own signature")
+        XCTAssertEqual(Updater.mode(bundleIdentifier: "com.vertuem.shelf", teamIdentifier: "ABCDE12345"), .signed)
     }
 
     func testPreviousBundleIsKeptForOneLaunch() throws {

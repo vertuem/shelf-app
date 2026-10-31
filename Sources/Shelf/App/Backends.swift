@@ -141,7 +141,7 @@ extension AppServices: SettingsBackend {
     }
 
     var isDevelopmentBuild: Bool { updater.isDevelopmentBuild }
-    var updatesInstallByHand: Bool { updater.mode == .notify }
+    var updatesAreUnsigned: Bool { updater.mode == .unsigned }
     var updateStatus: String { updater.statusText }
 
     var isCheckingForUpdates: Bool {

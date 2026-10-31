@@ -35,7 +35,7 @@ Press **⇧⌘V**, arrow to a card, press **Return**, and it is pasted where you
 2. Open it and drag Shelf to Applications.
 3. Open Shelf. Releases are not notarized by Apple yet, so the first time macOS says it cannot check the app: open System Settings, Privacy & Security, and click **Open Anyway**.
 
-Shelf needs macOS 14 Sonoma or later on Apple silicon. Shelf checks the [releases page](https://github.com/vertuem/shelf-app/releases) when it starts and every six hours, shows what is new, and downloads the new version for you to drag to Applications (Settings, About, Check for Updates asks right away). Version 0.1.0 cannot check: download a newer version once by hand. Building it yourself? See [Build from source](#build-from-source).
+Shelf needs macOS 14 Sonoma or later on Apple silicon. Shelf checks the [releases page](https://github.com/vertuem/shelf-app/releases) when it starts and every six hours, shows what is new, and installs it when you click Install Update, after checking it against the checksum published with the release (Settings, About, Check for Updates asks right away). Versions before 0.1.3 cannot install by themselves: download a newer version once by hand. Building it yourself? See [Build from source](#build-from-source).
 
 <img align="right" width="330" src="docs/images/onboarding.png" alt="The welcome tour">
 
@@ -231,7 +231,7 @@ screencapture -x -l <window number it prints> settings.png
 
 ### Signing
 
-Without signing secrets, `Scripts/release.sh` signs ad-hoc and skips notarization, which is how releases are built today. With `DEVELOPER_ID` and the notary secrets set in the repository, the same script signs with the Developer ID, notarizes and staples, and the in-app updater installs updates itself instead of only offering the download. To skip the Open Anyway step on a build you trust, remove the quarantine flag: `xattr -dr com.apple.quarantine /Applications/Shelf.app`.
+Without signing secrets, `Scripts/release.sh` signs ad-hoc and skips notarization, which is how releases are built today. With `DEVELOPER_ID` and the notary secrets set in the repository, the same script signs with the Developer ID, notarizes and staples, and the in-app updater also checks the Developer ID and Apple's notarization of every update. To skip the Open Anyway step on a build you trust, remove the quarantine flag: `xattr -dr com.apple.quarantine /Applications/Shelf.app`.
 
 ## Why the name
 

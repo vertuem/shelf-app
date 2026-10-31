@@ -68,6 +68,13 @@ struct GeneralPane: View {
                     detail: showInMenuBar ? nil : String(localized: "\(Brand.name) keeps running. Use the shortcut to open the shelf, or open \(Brand.name) from Spotlight to get back here."),
                     isOn: $showInMenuBar
                 )
+                // Without a Dock or menu bar icon this is the visible way out; ⌘Q works here too.
+                LabeledContent {
+                    Button(String(localized: "Quit \(Brand.name)")) { backend.quit() }
+                } label: {
+                    Text(String(localized: "Quit"))
+                    Text(String(localized: "Open \(Brand.name) from Spotlight to start it again."))
+                }
             }
 
             SettingsSection(String(localized: "Sounds")) {

@@ -6,6 +6,19 @@ All notable changes are listed here. The format follows
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-10-31
+
+**Coming from 0.1.1 or 0.1.2?** Those versions only download the update: quit Shelf first (Settings, ⌘Q), then drag the new one to Applications. From 0.1.3 on, Install Update does everything.
+
+### Added
+- Settings, General has a Quit button: with no Dock or menu bar icon there was no visible way to quit.
+
+### Changed
+- Updates install themselves, also for releases Apple did not sign: Install Update downloads the new version, checks it against the SHA-256 published with the release, checks that the app inside has an intact signature, Shelf's bundle id and a newer version, then replaces Shelf and relaunches it. No dragging, no quitting by hand, and no Open Anyway.
+
+### Fixed
+- The updater read the downloaded app's bundle id and version through a cache keyed by path; every disk image of the same name mounts at the same path, so a second check could see the first image's values.
+
 ## [0.1.2] - 2026-10-31
 
 ### Fixed

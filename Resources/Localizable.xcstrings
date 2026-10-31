@@ -5299,40 +5299,6 @@
         }
       }
     },
-    "Download": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Laden"
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Descargar"
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Télécharger"
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ダウンロード"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Downloaden"
-          }
-        }
-      }
-    },
     "Downloading…": {
       "localizations": {
         "de": {
@@ -8103,40 +8069,6 @@
         }
       }
     },
-    "New versions are on the releases page.": {
-      "localizations": {
-        "de": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Neue Versionen gibt es auf der Release-Seite."
-          }
-        },
-        "es": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Las versiones nuevas están en la página de versiones."
-          }
-        },
-        "fr": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Les nouvelles versions sont sur la page des versions."
-          }
-        },
-        "ja": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "新しいバージョンはリリースページにあります。"
-          }
-        },
-        "nl": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nieuwe versies staan op de releasepagina."
-          }
-        }
-      }
-    },
     "Next": {
       "localizations": {
         "de": {
@@ -8541,6 +8473,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Open %@"
+          }
+        }
+      }
+    },
+    "Open %@ from Spotlight to start it again.": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Öffne %@ über Spotlight, um es wieder zu starten."
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Abre %@ desde Spotlight para volver a iniciarlo."
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ouvrez %@ depuis Spotlight pour le relancer."
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "もう一度起動するには、Spotlightから%@を開きます。"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open %@ via Spotlight om het weer te starten."
           }
         }
       }
@@ -13807,36 +13773,36 @@
         }
       }
     },
-    "This copy of %@ is not signed by Apple, so it cannot replace itself. Download opens the disk image: drag %@ to Applications and replace the old one. On its first start, macOS asks once more for Accessibility and for the history key in your keychain; choose Always Allow.": {
+    "This copy of %@ is not signed by Apple. The update is checked against the checksum published with the release before it replaces the app. After the relaunch, macOS asks once more for Accessibility and for the history key in your keychain; choose Always Allow.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Diese Kopie von %1$@ ist nicht von Apple signiert und kann sich daher nicht selbst ersetzen. „Laden“ öffnet das Image: Ziehe %2$@ in „Programme“ und ersetze die alte Version. Beim ersten Start fragt macOS noch einmal nach Bedienungshilfen und nach dem Verlaufsschlüssel im Schlüsselbund; wähle „Immer erlauben“."
+            "value": "Diese Kopie von %@ ist nicht von Apple signiert. Das Update wird mit der Prüfsumme der Veröffentlichung abgeglichen, bevor es die App ersetzt. Nach dem Neustart fragt macOS noch einmal nach Bedienungshilfen und nach dem Verlaufsschlüssel im Schlüsselbund; wähle „Immer erlauben“."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Esta copia de %1$@ no está firmada por Apple, así que no puede reemplazarse sola. Descargar abre la imagen de disco: arrastra %2$@ a Aplicaciones y reemplaza la versión anterior. Al abrirla por primera vez, macOS vuelve a pedir Accesibilidad y la clave del historial en tu llavero; elige Permitir siempre."
+            "value": "Esta copia de %@ no está firmada por Apple. La actualización se comprueba con la suma de verificación publicada con la versión antes de reemplazar la app. Tras reiniciar, macOS vuelve a pedir Accesibilidad y la clave del historial en tu llavero; elige Permitir siempre."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Cette copie de %1$@ n'est pas signée par Apple et ne peut donc pas se remplacer elle-même. Télécharger ouvre l'image disque : glissez %2$@ dans Applications et remplacez l'ancienne version. Au premier lancement, macOS redemande l'accessibilité et la clé de l'historique dans votre trousseau ; choisissez Toujours autoriser."
+            "value": "Cette copie de %@ n'est pas signée par Apple. La mise à jour est vérifiée avec la somme de contrôle publiée avec la version avant de remplacer l'app. Après le redémarrage, macOS redemande l'accessibilité et la clé de l'historique dans votre trousseau ; choisissez Toujours autoriser."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "この%1$@はAppleの署名がないため、自動では置き換えられません。「ダウンロード」でディスクイメージが開きます。%2$@を「アプリケーション」にドラッグして古いものと置き換えてください。初回起動時、macOSがアクセシビリティとキーチェーン内の履歴キーへのアクセスをもう一度確認します。「常に許可」を選んでください。"
+            "value": "この%@はAppleの署名がありません。アップデートは、リリースと一緒に公開されたチェックサムと照合してからアプリを置き換えます。再起動後、macOSがアクセシビリティとキーチェーン内の履歴キーへのアクセスをもう一度確認します。「常に許可」を選んでください。"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Deze kopie van %1$@ is niet door Apple ondertekend en kan zichzelf dus niet vervangen. Downloaden opent de schijfkopie: sleep %2$@ naar Programma's en vervang de oude versie. Bij de eerste start vraagt macOS nog één keer om Toegankelijkheid en om de geschiedenissleutel in je sleutelhanger; kies Altijd toestaan."
+            "value": "Deze kopie van %@ is niet door Apple ondertekend. De update wordt vergeleken met de checksum die bij de release is gepubliceerd voordat hij de app vervangt. Na het herstarten vraagt macOS nog één keer om Toegankelijkheid en om de geschiedenissleutel in je sleutelhanger; kies Altijd toestaan."
           }
         }
       }
@@ -14419,36 +14385,36 @@
         }
       }
     },
-    "Updates come from GitHub Releases. This copy is not signed by Apple, so %@ tells you when a new version is out and downloads it; you drag it to Applications.": {
+    "Updates come from GitHub Releases. This copy is not signed by Apple, so each download is checked against the checksum published with the release before it replaces the app, and the previous version is kept until the new one starts.": {
       "localizations": {
         "de": {
           "stringUnit": {
             "state": "translated",
-            "value": "Updates kommen von GitHub Releases. Diese Kopie ist nicht von Apple signiert: %@ sagt dir, wenn eine neue Version da ist, und lädt sie; du ziehst sie in „Programme“."
+            "value": "Updates kommen von GitHub Releases. Diese Kopie ist nicht von Apple signiert: Jeder Download wird mit der Prüfsumme der Veröffentlichung abgeglichen, bevor er die App ersetzt, und die vorherige Version bleibt erhalten, bis die neue läuft."
           }
         },
         "es": {
           "stringUnit": {
             "state": "translated",
-            "value": "Las actualizaciones vienen de GitHub Releases. Esta copia no está firmada por Apple, así que %@ te avisa cuando hay una versión nueva y la descarga; tú la arrastras a Aplicaciones."
+            "value": "Las actualizaciones vienen de GitHub Releases. Esta copia no está firmada por Apple, así que cada descarga se comprueba con la suma de verificación publicada con la versión antes de reemplazar la app, y la versión anterior se conserva hasta que la nueva arranca."
           }
         },
         "fr": {
           "stringUnit": {
             "state": "translated",
-            "value": "Les mises à jour viennent de GitHub Releases. Cette copie n'est pas signée par Apple : %@ vous prévient quand une nouvelle version sort et la télécharge ; vous la glissez dans Applications."
+            "value": "Les mises à jour viennent de GitHub Releases. Cette copie n'est pas signée par Apple : chaque téléchargement est vérifié avec la somme de contrôle publiée avec la version avant de remplacer l'app, et la version précédente est conservée jusqu'au démarrage de la nouvelle."
           }
         },
         "ja": {
           "stringUnit": {
             "state": "translated",
-            "value": "アップデートはGitHub Releasesから届きます。このコピーはAppleの署名がないため、%@は新しいバージョンが出たことを知らせてダウンロードします。「アプリケーション」へのドラッグはご自身で行います。"
+            "value": "アップデートはGitHub Releasesから届きます。このコピーはAppleの署名がないため、各ダウンロードはリリースと一緒に公開されたチェックサムと照合してからアプリを置き換えます。新しいバージョンが起動するまで、以前のバージョンは保持されます。"
           }
         },
         "nl": {
           "stringUnit": {
             "state": "translated",
-            "value": "Updates komen van GitHub Releases. Deze kopie is niet door Apple ondertekend: %@ laat weten wanneer er een nieuwe versie is en downloadt die; jij sleept hem naar Programma's."
+            "value": "Updates komen van GitHub Releases. Deze kopie is niet door Apple ondertekend: elke download wordt vergeleken met de checksum die bij de release is gepubliceerd voordat hij de app vervangt, en de vorige versie blijft bewaard tot de nieuwe draait."
           }
         }
       }
@@ -14483,6 +14449,40 @@
           "stringUnit": {
             "state": "translated",
             "value": "Handtekening en notarisatie controleren…"
+          }
+        }
+      }
+    },
+    "Verifying the download…": {
+      "localizations": {
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download wird geprüft …"
+          }
+        },
+        "es": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Comprobando la descarga…"
+          }
+        },
+        "fr": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Vérification du téléchargement…"
+          }
+        },
+        "ja": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ダウンロードを確認中…"
+          }
+        },
+        "nl": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download controleren…"
           }
         }
       }
