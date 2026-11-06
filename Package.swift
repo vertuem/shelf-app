@@ -11,7 +11,7 @@ let package = Package(
         .executable(name: "Shelf", targets: ["Shelf"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/groue/GRDB.swift", exact: "7.11.1"),
+        .package(url: "https://github.com/groue/GRDB.swift", exact: "7.12.0"),
         .package(url: "https://github.com/sindresorhus/KeyboardShortcuts", exact: "3.1.0"),
     ],
     targets: [
